@@ -48,3 +48,13 @@ gds_clean <- Table(gds) |>   # extract the expression table
 readr::write_tsv(gds_clean,
                  file = "data/02_gds6063_clean.tsv.gz")
 ```
+
+```{r}
+view(gds_clean)
+```
+
+```{r}
+# Look at the first few rows
+head(Table(gds), 10)
+
+```
