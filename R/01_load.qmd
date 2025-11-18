@@ -8,6 +8,8 @@ editor: visual
 
 ```{r}
 library(GEOquery)
+library(dplyr)
+library(tibble)
 ```
 
 ## Running Code
@@ -27,3 +29,24 @@ pheno_data <- pData(gse)
 feature_data <- fData(gse)
 
 ```
+
+load raw_data
+
+```{r}
+
+# Download full SOFT file (untidy)
+gse_raw <- getGEO("GSE54514", GSEMatrix = FALSE)
+
+# Extract all samples
+gsms <- GSMList(gse_raw)
+
+# Extract raw metadata (untidy)
+meta_untidy <- lapply(gsms, function(gsm) {
+  tibble(
+    sample = Meta(gsm)$geo_accession,           # Correct way to get sample ID
+    characteristics = Meta(gsm)$characteristics_ch1  # untidy fields
+  )
+}) |> bind_rows()
+
+```
+
