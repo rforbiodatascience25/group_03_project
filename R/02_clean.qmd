@@ -148,7 +148,7 @@ For analysis and readability concerns the columns "group_day" and "group_id" are
 ```{r}
 meta_clean <- meta_wide |>
   separate(group_day, into = c("group_temp", "day"), sep = "_", remove = TRUE) |>
-  select(-group_temp, -group_id)
+  select(-group_temp)
 ```
 
 ```{r}
