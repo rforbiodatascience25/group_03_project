@@ -4,6 +4,12 @@ format: html
 editor: visual
 ---
 
+## Library loading
+
+```{r}
+library(tidyverse)
+```
+
 ## Quarto
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
@@ -154,3 +160,28 @@ head(meta_clean)
 ```
 
 Now that the metadata has been cleaned, the next step is to add the gene expression of some **up-regulated** some **down-regulated** genes for sepsis and some with no variation.
+
+
+# Clean Platform table
+
+```{r}
+directory = getwd()
+if (str_sub(directory,-1) == 'R'){
+  directory = str_sub(directory,1,-3)
+}
+directory
+
+platform_table = read_tsv(file.path(directory,'data/platform_table.tsv'))
+
+platform_table_clean <- tibble(ID = platform_table$ID,
+                               ILMN_Gene = platform_table$ILMN_Gene)
+
+platform_table_clean <- platform_table_clean |> rename('Gene_ID' = ILMN_Gene)
+platform_table_clean <- platform_table_clean |> rename('ILMN_Gene' = ID)
+
+gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
+platform_table_clean <- platform_table_clean |> filter(Gene_ID %in% gene_list)
+
+write_tsv(x = platform_table_clean, 
+          file = file.path(directory,'data/platform_table_clean.tsv'))
+```

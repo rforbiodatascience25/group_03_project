@@ -10,6 +10,8 @@ editor: visual
 library(GEOquery)
 library(dplyr)
 library(tibble)
+library(tidyverse)
+library(stringr)
 ```
 
 ## Running Code
@@ -47,6 +49,20 @@ meta_untidy <- lapply(gsms, function(gsm) {
     characteristics = Meta(gsm)$characteristics_ch1  # untidy fields
   )
 }) |> bind_rows()
+
+# Load Platform
+
+```{r}
+platform_raw <- getGEO("GPL6947")
+platform_table = platform_raw@dataTable@table
+
+directory = getwd()
+if (str_sub(directory,-1) == 'R'){
+  directory = str_sub(directory,1,-3)
+}
+
+write_tsv(x = platform_table, 
+          file = file.path(directory,'data/platform_table.tsv'))
 
 ```
 
