@@ -32,5 +32,57 @@ Before we had a metadata table, now we will add 15 new genes based on the paper 
 ### First, we load the gene expression matrix
 
 ```{r}
+setwd("..")
+gene_expression <- read_tsv("data/expression_data.tsv")
+head(gene_expression)
+```
 
+We need to filter this table for the genes of interest previously mentioned only..
+
+Oh no! we find out that we don't have the real gene name, but the illumina gene ID. Lucky for us, we have a table that will help us with that
+
+### Then, we load the previous gene table
+
+So we can find the real gene name based on the ILMN gene name
+
+```{r}
+setwd("..")
+gene_names <- read_tsv("data/platform_table_clean.tsv")
+show(gene_names)
+```
+
+### Gene expression data formatting
+
+Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
+
+```{r}
+#Sum and divide values from expression_data
+#After, delete repeated rows 
+#Show clean expression_data
+```
+
+Change name rows from ILMN_gene to real Gene_ID
+
+```{r}
+#ILMN_gene -> Gene_ID
+```
+
+And pivot data so samples are rows instead of cols
+
+```{r}
+#Pivot_wider
+```
+
+Ok, now the expression_data is in format!
+
+Now merge all data...
+
+```{r}
+#Merge original metadata_table with expression_data based on sample name 
+```
+
+### Final data visualization
+
+```{r}
+show(final_data)
 ```
