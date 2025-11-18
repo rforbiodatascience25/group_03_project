@@ -4,45 +4,26 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Library loading
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+```{r}
+library(GEOquery)
+```
 
 ## Running Code
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Downloading of all the data we need.
 
 ```{r}
-rm(list = ls())
+
+gse <- getGEO("GSE54514", GSEMatrix = TRUE)
+
+# If multiple platforms, take the first one
+gse <- gse[[1]]
+
+# Inspect
+exprs_data <- exprs(gse)
+pheno_data <- pData(gse)
+feature_data <- fData(gse)
 
 ```
-
-You can add options to executable code like this
-
-```{r}
-#| label: load-data
-#| eval: true
-
-library(GEOquery)
-library(stringr)
-
-raw_dir <- "data/_raw/"
-data_file <- "GDS6063_full.soft.gz"
-data_loc <- "https://ftp.ncbi.nlm.nih.gov/geo/datasets/GDS6nnn/GDS6063/soft/"  # example GEO FTP path
-
-if (!dir.exists(raw_dir)) {
-  dir.create(path = raw_dir, recursive = TRUE)
-}
-if (!file.exists(str_c(raw_dir, data_file))) {
-  download.file(
-    url = str_c(data_loc, data_file),
-    destfile = str_c(raw_dir, data_file)
-  )
-}
-
-# Load the SOFT file
-gds <- getGEO(filename = str_c(raw_dir, data_file))
-
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).

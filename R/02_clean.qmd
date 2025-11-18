@@ -33,28 +33,20 @@ gds_clean <- Table(gds) |>   # extract the expression table
 ```
 
 ```{r}
-#| label: clean-data
-#| eval: true
-
-library(dplyr)
 library(tibble)
+library(readr)
 
-gds_clean <- Table(gds) |>   # extract the expression table
-  as_tibble()
+expr_clean <- exprs_data |>
+  as_tibble(rownames = "probe_id")
 
-```
+pheno_clean <- as_tibble(pheno_data, rownames = "sample_id")
+write_tsv(pheno_clean, "data/02_gse54514_pheno.tsv.gz")
 
-```{r}
-readr::write_tsv(gds_clean,
-                 file = "data/02_gds6063_clean.tsv.gz")
-```
+feature_clean <- as_tibble(feature_data, rownames = "probe_id")
+write_tsv(feature_clean, "data/02_gse54514_annotation.tsv.gz")
 
-```{r}
-view(gds_clean)
-```
+readr::write_tsv(expr_clean,
+                 file = "data/02_gse54514_expression.tsv.gz")
 
-```{r}
-# Look at the first few rows
-head(Table(gds), 10)
 
 ```
