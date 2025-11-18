@@ -8,6 +8,9 @@ editor: visual
 
 ```{r}
 library(tidyverse)
+library(tibble)
+library(readr)
+library(dplyr)
 ```
 
 ## Quarto
@@ -17,13 +20,6 @@ Quarto enables you to weave together content and executable code into a finished
 ## Cleaning Data
 
 get the data to zipped files
-
-```{r}
-library(tibble)
-library(readr)
-library(dplyr)
-
-```
 
 ```{r}
 
@@ -160,7 +156,6 @@ head(meta_clean)
 ```
 
 Now that the metadata has been cleaned, the next step is to add the gene expression of some **up-regulated** some **down-regulated** genes for sepsis and some with no variation.
-
 
 # Clean Platform table
 

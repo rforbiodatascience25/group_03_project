@@ -50,9 +50,12 @@ meta_untidy <- lapply(gsms, function(gsm) {
   )
 }) |> bind_rows()
 
-# Load Platform
+
+```
 
 ```{r}
+# Load Platform
+
 platform_raw <- getGEO("GPL6947")
 platform_table = platform_raw@dataTable@table
 
@@ -63,6 +66,4 @@ if (str_sub(directory,-1) == 'R'){
 
 write_tsv(x = platform_table, 
           file = file.path(directory,'data/platform_table.tsv'))
-
 ```
-
