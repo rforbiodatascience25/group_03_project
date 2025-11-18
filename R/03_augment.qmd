@@ -30,3 +30,7 @@ Before we had a metadata table, now we will add 15 new genes based on the paper 
     -   TRIM44, UGT2B7, TCP1, ORC1L and NEK1
 
 ### First, we load the gene expression matrix
+
+```{r}
+
+```
