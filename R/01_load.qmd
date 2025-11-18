@@ -29,7 +29,22 @@ gse <- gse[[1]]
 exprs_data <- exprs(gse)
 pheno_data <- pData(gse)
 feature_data <- fData(gse)
+```
 
+```{r}
+#Now we save the expression data, its a matrix
+class(exprs_data)
+
+#Since its a matrix we make it df
+df_ed <- as.data.frame(exprs_data)
+
+#And we keep the rownames 
+df_ed$gene_ID <- rownames(df_ed)
+df_ed <- df_ed[, c("gene_ID", colnames(df_ed)[colnames(df_ed) != "gene_ID"])]
+
+#Save expression data as tsv
+write_tsv(x = df_ed, 
+          file = file.path(directory,'data/expression_data.tsv'))
 ```
 
 load raw_data
@@ -49,7 +64,6 @@ meta_untidy <- lapply(gsms, function(gsm) {
     characteristics = Meta(gsm)$characteristics_ch1  # untidy fields
   )
 }) |> bind_rows()
-
 
 ```
 

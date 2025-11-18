@@ -1,0 +1,36 @@
+---
+title: "03_augment"
+format: html
+editor: visual
+---
+
+## Load libraries
+
+```{r}
+library(tidyverse)
+library(tibble)
+library(readr)
+library(dplyr)
+```
+
+## Time to add our new genes
+
+Before we had a metadata table, now we will add 15 new genes based on the paper (Pawlikowski JS, McBryan T, van Tuyn J, Drotar ME et al. Wnt signaling potentiates nevogenesis. Proc Natl Acad Sci U S A 2013 Oct 1;110(40):16009-14. PMID: [24043806](https://www.ncbi.nlm.nih.gov/pubmed/24043806 "Link to PubMed record"))
+
+-   5 down regulated genes
+
+    -   WIPF1, CD8A, CD2, ELK1 and CD3E
+
+-   5 up regulated genes
+
+    -   MAPK1, LFT, SOCS1, RELB and GNB4
+
+-   5 non modified genes
+
+    -   TRIM44, UGT2B7, TCP1, ORC1L and NEK1
+
+### First, we load the gene expression matrix
+
+```{r}
+
+```
