@@ -90,9 +90,30 @@ head(clean_data)
 
 Ok, now the expression_data is in format!
 
+Now, lets merge the original metadata and gene expression based on sample_id
+
+```{r}
+#First, pivot gene expression
+second_clean <- clean_data |>
+  pivot_longer(
+    cols = starts_with("GSM"),
+    names_to = "sample",
+    values_to = "expression"
+  )
+
+show(second_clean)
+```
+
+Now we can merge them!
+
+```{r}
+merged_final <- second_clean |>
+  left_join(meta_clean, by = "sample")
+```
+
 ### Final data visualization
 
 ```{r}
-show(clean_data)
-summary(clean_data)
+show(merged_final)
+summary(merged_final)
 ```
