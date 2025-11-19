@@ -13,6 +13,8 @@ execute:
 
 ```{r}
 library(GEOquery)
+library(dplyr)
+library(tibble)
 library(tidyverse)
 library(stringr)
 ```
@@ -32,6 +34,39 @@ gse <- gse[[1]]
 exprs_data <- exprs(gse)
 pheno_data <- pData(gse)
 feature_data <- fData(gse)
+```
+
+```{r}
+#Now we save the expression data, its a matrix
+class(exprs_data)
+
+#Since its a matrix we make it df
+df_ed <- as.data.frame(exprs_data)
+
+#And we keep the rownames 
+df_ed$gene_ID <- rownames(df_ed)
+df_ed <- df_ed[, c("gene_ID", colnames(df_ed)[colnames(df_ed) != "gene_ID"])]
+
+#Save expression data as tsv
+write_tsv(x = df_ed, 
+          file = file.path(directory,'data/expression_data.tsv'))
+```
+
+```{r}
+
+# Download full SOFT file (untidy)
+gse_raw <- getGEO("GSE54514", GSEMatrix = FALSE)
+
+# Extract all samples
+gsms <- GSMList(gse_raw)
+
+# Extract raw metadata (untidy)
+meta_untidy <- lapply(gsms, function(gsm) {
+  tibble(
+    sample = Meta(gsm)$geo_accession,           # Correct way to get sample ID
+    characteristics = Meta(gsm)$characteristics_ch1  # untidy fields
+  )
+}) |> bind_rows()
 
 ```
 
@@ -39,6 +74,13 @@ feature_data <- fData(gse)
 
 ```{r}
 platform_raw <- getGEO(gse@annotation)
+load raw_data
+```
+
+```{r}
+# Load Platform
+
+platform_raw <- getGEO("GPL6947")
 platform_table = platform_raw@dataTable@table
 
 directory = getwd()
@@ -48,5 +90,4 @@ if (str_sub(directory,-1) == 'R'){
 
 write_tsv(x = platform_table, 
           file = file.path(directory,'data/platform_table.tsv'))
-
 ```

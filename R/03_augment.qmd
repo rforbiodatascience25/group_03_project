@@ -1,0 +1,119 @@
+---
+title: "03_augment"
+format: html
+editor: visual
+---
+
+## Load libraries
+
+```{r}
+library(tidyverse)
+library(tibble)
+library(readr)
+library(dplyr)
+```
+
+## Time to add our new genes
+
+Before we had a metadata table, now we will add 15 new genes based on the paper (Pawlikowski JS, McBryan T, van Tuyn J, Drotar ME et al. Wnt signaling potentiates nevogenesis. Proc Natl Acad Sci U S A 2013 Oct 1;110(40):16009-14. PMID: [24043806](https://www.ncbi.nlm.nih.gov/pubmed/24043806 "Link to PubMed record"))
+
+-   5 down regulated genes
+
+    -   WIPF1, CD8A, CD2, ELK1 and CD3E
+
+-   5 up regulated genes
+
+    -   MAPK1, LFT, SOCS1, RELB and GNB4
+
+-   5 non modified genes
+
+    -   TRIM44, UGT2B7, TCP1, ORC1L and NEK1
+
+### First, we load the gene expression matrix
+
+```{r}
+setwd("..")
+gene_expression <- read_tsv("data/expression_data.tsv")
+head(gene_expression)
+```
+
+We need to filter this table for the genes of interest previously mentioned only..
+
+Oh no! we find out that we don't have the real gene name, but the illumina gene ID. Lucky for us, we have a table that will help us with that
+
+### Then, we load the previous gene table
+
+So we can find the real gene name based on the ILMN gene name
+
+```{r}
+setwd("..")
+gene_names <- read_tsv("data/platform_table_clean.tsv")
+show(gene_names)
+```
+
+### Gene expression data formatting
+
+Join both tables, by renaming columns and merging
+
+```{r}
+#Rename so both have the same ILMN_ID
+expression_data <- gene_expression |>
+  rename(ILMN_ID = gene_ID)
+
+annotation_data <- gene_names |>
+  rename(ILMN_ID = ILMN_Gene)
+
+#Merge the two tables based on ILMN_ID
+merged_data <- expression_data |>
+  left_join(annotation_data, by = "ILMN_ID")
+
+head(merged_data)
+```
+
+Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
+
+```{r}
+#Keep only genes of interest
+merged_data <- merged_data |>
+  filter(!is.na(Gene_ID))
+
+#Average values with same Gene_ID
+clean_data <- merged_data |>
+  group_by(Gene_ID) |>
+  summarise(across(starts_with("GSM"), mean, na.rm = TRUE)) |>
+            ungroup()
+
+#Now we have only the data we are interested in 
+unique(clean_data$Gene_ID)
+head(clean_data)
+```
+
+Ok, now the expression_data is in format!
+
+Now, lets merge the original metadata and gene expression based on sample_id
+
+```{r}
+#First, pivot gene expression
+second_clean <- clean_data |>
+  pivot_longer(
+    cols = starts_with("GSM"),
+    names_to = "sample",
+    values_to = "expression"
+  )
+
+show(second_clean)
+```
+
+Now we can merge them!
+
+```{r}
+merged_final <- second_clean |>
+  left_join(meta_clean, by = "sample")
+```
+
+### Final data visualization
+
+```{r}
+show(merged_final)
+summary(merged_final)
+```

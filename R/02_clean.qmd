@@ -13,25 +13,22 @@ execute:
 
 ```{r}
 library(tidyverse)
+library(tibble)
+library(readr)
+library(dplyr)
 ```
 
 ## Running Code
 
-```{r}
-#| label: clean-data
-#| eval: true
+## Quarto
 
-library(dplyr)
-library(tibble)
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
-gds_clean <- Table(gds) |>   # extract the expression table
-  as_tibble()
+## Cleaning Data
 
-```
+get the data to zipped files
 
 ```{r}
-library(tibble)
-library(readr)
 
 expr_clean <- exprs_data |>
   as_tibble(rownames = "probe_id")
@@ -45,8 +42,127 @@ write_tsv(feature_clean, "data/02_gse54514_annotation.tsv.gz")
 readr::write_tsv(expr_clean,
                  file = "data/02_gse54514_expression.tsv.gz")
 
+readr::write_tsv(meta_untidy, "data/02_gse54514_phenotype_untidy.tsv.gz")
+
+#here is the dataset we will focus on:
+meta_untidy <- read_tsv("data/02_gse54514_phenotype_untidy.tsv.gz")
+
 
 ```
+
+## Now let's do some cleaning!
+
+Let's take a closer look on the data we have.
+
+```{r}
+head(meta_untidy)
+```
+
+There is a problem here, all the characteristics for these 6 first rows correspond to the same measurement (same sample ID). Let's look at the dimensions of the data.
+
+```{r}
+dim(meta_untidy)
+length(unique(meta_untidy$sample))
+
+```
+
+In this table of meta data, we only should have 163 data sample, so there should be only 163 rows. Instead we have 2 columns and 1467 rows !!!\
+For instance, let's filter to only show a single sample:
+
+```{r}
+meta_untidy |> filter(sample == "GSM1317921")
+```
+
+We see that a single sample has 9 different rows, which is not correct for a clean dataset!\
+Indeed, a tidy data set should follow these rules:
+
+-   Every column contains exactly one variable.
+
+-   Every row represents exactly one experimental unit (sample).
+
+-   Every cell contains exactly one measurement.
+
+Here, this is clearly not the case:
+
+-   All the variables are packed into a single column (characteristics)
+
+-   Each sample is repeated across multiple rows, once per characteristic
+
+-   Some rows even correspond to the same experiment but contain different variables
+
+**The first step of the cleaning is to separate the key and the value.**
+
+In the column "characteristics", we have both a variable name (the key) and its value, all together in a single string. For instance we would have something like this: "age (years): 42".\
+We need to split this column into two new ones (key, value) using the separator ": "
+
+```{r}
+meta_separated <- meta_untidy |>
+  separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge")
+```
+
+##### Here, the argument \[extra = "merge"\] will be useful if there is some characteristics like this "site of infection: upper: lung" we we will want to merge the "upper: lung" part to not loose information.
+
+Now we have a table that looks like this:
+
+```{r}
+head(meta_separated)
+```
+
+**The next step is to pivot from long to wide.**
+
+Currently, eahc sample has multiple rows, we want one row per sample and one column per variable. We use pivot_wider()
+
+```{r}
+meta_wide <- meta_separated |>
+  pivot_wider(names_from = key, values_from = value)
+```
+
+Now our table finally has its right dimensions:
+
+```{r}
+dim(meta_wide)
+head(meta_wide)
+```
+
+**Verify NA values**
+
+There are NA values in the servery column (not only on this one) and we want to check if they have the good format. With this line we print every row which has the "NA" string in the severity (apacheii) column.
+
+```{r}
+meta_wide[meta_wide$`severity (apacheii)` == "NA", ]
+
+```
+
+There is 36 rows in the result! Which means that we need to convert these "NA" strings into the right format:
+
+```{r}
+meta_wide <- meta_wide |>
+  mutate_all(~ ifelse(. == "NA", NA, .))
+```
+
+**Remove the "tissue" column**
+
+This column is always "whole blood" so this is not informative.
+
+```{r}
+meta_wide <- meta_wide |> select(-tissue)
+```
+
+**Cleaning group_day and group_id**
+
+For analysis and readability concerns the columns "group_day" and "group_id" are not explicitly clear. Since the data of the disease status is already contained in the associated column, we will only keep the day from these. We use the "\_" separator in order to do so.
+
+```{r}
+meta_clean <- meta_wide |>
+  separate(group_day, into = c("group_temp", "day"), sep = "_", remove = TRUE) |>
+  select(-group_temp)
+```
+
+```{r}
+head(meta_clean)
+```
+
+Now that the metadata has been cleaned, the next step is to add the gene expression of some **up-regulated** some **down-regulated** genes for sepsis and some with no variation.
 
 # Clean Platform table
 
