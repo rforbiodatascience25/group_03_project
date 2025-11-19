@@ -1,30 +1,21 @@
 ---
-title: "02_clean"
-format: html
+title: "Exam - Clean Data: Group 03"
+format:
+  html:
+    embed-resources: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
 ---
 
-## Library loading
+## Load Libraries
 
 ```{r}
 library(tidyverse)
 ```
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
 ## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-ls()
-str(gds)
-
-```
-
-You can add options to executable code like this
 
 ```{r}
 #| label: clean-data
@@ -74,8 +65,8 @@ platform_table_clean <- tibble(ID = platform_table$ID,
 platform_table_clean <- platform_table_clean |> rename('Gene_ID' = ILMN_Gene)
 platform_table_clean <- platform_table_clean |> rename('ILMN_Gene' = ID)
 
-gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
-platform_table_clean <- platform_table_clean |> filter(Gene_ID %in% gene_list)
+#gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
+#platform_table_clean <- platform_table_clean |> filter(Gene_ID %in% gene_list)
 
 write_tsv(x = platform_table_clean, 
           file = file.path(directory,'data/platform_table_clean.tsv'))

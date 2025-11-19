@@ -1,0 +1,28 @@
+---
+title: "Exam - Describe Data: Group 03"
+format:
+  html:
+    embed-resources: true
+editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
+---
+
+# Load Libraries
+
+```{r}
+library("tidyr")
+```
+
+# Load Data
+
+```{r}
+data_aug = read_tsv("/net/pupil1/home/people/s194685/projects/Exam_test/data/03_aug_data.tsv")
+```
+
+# Describe Data
+
+```{r}
+
+```
