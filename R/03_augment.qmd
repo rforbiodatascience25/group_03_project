@@ -58,7 +58,7 @@ Join both tables, by renaming columns and merging
 ```{r}
 #Rename so both have the same ILMN_ID
 expression_data <- gene_expression |>
-  rename(ILMN_ID = gene_ID)
+  rename(ILMN_ID = probeID)
 
 annotation_data <- gene_names |>
   rename(ILMN_ID = ILMN_Gene)
@@ -68,6 +68,16 @@ merged_data <- expression_data |>
   left_join(annotation_data, by = "ILMN_ID")
 
 head(merged_data)
+```
+
+However, we stated in the beginning that we are only interested in certain genes, so lets select those so it's easier to work with
+
+```{r}
+gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
+
+merged_data <- merged_data |> filter(Gene_ID %in% gene_list)
+
+show(merged_data_clean)
 ```
 
 Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
@@ -84,15 +94,8 @@ clean_data <- merged_data |>
             ungroup()
 
 #Now we have only the data we are interested in 
-unique(clean_data$Gene_ID)
-head(clean_data)
-```
-
-Lets compare before and after
-
-```{r}
-length(gene_names$Gene_ID)
-length(clean_data$Gene_ID)
+length(unique(clean_data$Gene_ID))
+show(clean_data)
 ```
 
 Ok, now the expression_data is in format!
