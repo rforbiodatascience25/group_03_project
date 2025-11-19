@@ -1,10 +1,15 @@
 ---
-title: "01_load"
-format: html
+title: "Exam - Load Data: Group 03"
+format:
+  html:
+    embed-resources: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
 ---
 
-## Library loading
+## Loading Libraries
 
 ```{r}
 library(GEOquery)
@@ -14,7 +19,7 @@ library(tidyverse)
 library(stringr)
 ```
 
-## Running Code
+## Loading Expression, Phenotypes and Features Data
 
 Downloading of all the data we need.
 
@@ -47,8 +52,6 @@ write_tsv(x = df_ed,
           file = file.path(directory,'data/expression_data.tsv'))
 ```
 
-load raw_data
-
 ```{r}
 
 # Download full SOFT file (untidy)
@@ -65,6 +68,13 @@ meta_untidy <- lapply(gsms, function(gsm) {
   )
 }) |> bind_rows()
 
+```
+
+## Load Platform
+
+```{r}
+platform_raw <- getGEO(gse@annotation)
+load raw_data
 ```
 
 ```{r}
