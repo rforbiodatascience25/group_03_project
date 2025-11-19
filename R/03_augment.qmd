@@ -53,36 +53,46 @@ show(gene_names)
 
 ### Gene expression data formatting
 
+Join both tables, by renaming columns and merging
+
+```{r}
+#Rename so both have the same ILMN_ID
+expression_data <- gene_expression |>
+  rename(ILMN_ID = gene_ID)
+
+annotation_data <- gene_names |>
+  rename(ILMN_ID = ILMN_Gene)
+
+#Merge the two tables based on ILMN_ID
+merged_data <- expression_data |>
+  left_join(annotation_data, by = "ILMN_ID")
+
+head(merged_data)
+```
+
 Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
 
 ```{r}
-#Sum and divide values from expression_data
-#After, delete repeated rows 
-#Show clean expression_data
-```
+#Keep only genes of interest
+merged_data <- merged_data |>
+  filter(!is.na(Gene_ID))
 
-Change name rows from ILMN_gene to real Gene_ID
+#Average values with same Gene_ID
+clean_data <- merged_data |>
+  group_by(Gene_ID) |>
+  summarise(across(starts_with("GSM"), mean, na.rm = TRUE)) |>
+            ungroup()
 
-```{r}
-#ILMN_gene -> Gene_ID
-```
-
-And pivot data so samples are rows instead of cols
-
-```{r}
-#Pivot_wider
+#Now we have only the data we are interested in 
+unique(clean_data$Gene_ID)
+head(clean_data)
 ```
 
 Ok, now the expression_data is in format!
 
-Now merge all data...
-
-```{r}
-#Merge original metadata_table with expression_data based on sample name 
-```
-
 ### Final data visualization
 
 ```{r}
-show(final_data)
+show(clean_data)
+summary(clean_data)
 ```
