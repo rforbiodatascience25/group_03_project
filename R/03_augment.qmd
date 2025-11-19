@@ -88,6 +88,13 @@ unique(clean_data$Gene_ID)
 head(clean_data)
 ```
 
+Lets compare before and after
+
+```{r}
+length(gene_names$Gene_ID)
+length(clean_data$Gene_ID)
+```
+
 Ok, now the expression_data is in format!
 
 Now, lets merge the original metadata and gene expression based on sample_id
