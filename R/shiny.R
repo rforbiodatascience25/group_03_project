@@ -3,34 +3,19 @@ library(bslib)
 library(tidyverse)
 library(GEOquery)
 
+merged_final = read_tsv('merged_final.tsv')
+
+merged_final_0 = merged_final
+
+#
+
+merged_final_0 = select(merged_final_0, Gene_ID, sample, expression)
+
 #
 gse <- getGEO("GSE54514", GSEMatrix = TRUE)
 
 # If multiple platforms, take the first one
 gse <- gse[[1]]
-
-# Inspect
-exprs_data <- exprs(gse)
-pheno_data <- pData(gse)
-feature_data <- fData(gse)
-
-#
-
-#Since its a matrix we make it df
-df_ed <- as.data.frame(exprs_data)
-
-#And we keep the rownames 
-df_ed$gene_ID <- rownames(df_ed)
-df_ed <- df_ed[, c("gene_ID", colnames(df_ed)[colnames(df_ed) != "gene_ID"])]
-
-df_ed_tibble = tibble(df_ed)
-
-df_ed_long <- df_ed_tibble |> pivot_longer(cols = GSM1317896:GSM1318058, 
-                                           names_to = 'Gene_name', 
-                                           values_to = 'Gene_expression')
-
-#
-
 pheno_data <- pData(gse)
 pheno_data_tibble = tibble(pheno_data)
 
@@ -40,88 +25,84 @@ pheno_data_control <- pheno_data_tibble |>
   group_by(control)  |> 
   select(geo_accession, control)
 
-#
-
-#combine  df_ed_long and pheno_data_control
-df_gene <- left_join(x = df_ed_long,
-                     y = pheno_data_control, 
-                     by = join_by(Gene_name == geo_accession))
+merged_final_0 <- left_join(x = merged_final_0,
+                            y = pheno_data_control, 
+                            by = join_by(sample == geo_accession))
 
 #Get list of distinct gene_ID
-gene_ID_distinct <- df_gene |> distinct(gene_ID)
+Gene_ID_distinct <- merged_final_0 |> distinct(Gene_ID)
 
 #Add control and gene_id as factors and groups
-df_gene <- df_gene |> 
+merged_final_0 <- merged_final_0 |> 
   mutate(control = factor(control, levels = c(TRUE, FALSE)),
-         gene_ID = factor(gene_ID,gene_ID_distinct$gene_ID))  |> 
-  group_by(control,gene_ID)
+         Gene_ID = factor(Gene_ID,Gene_ID_distinct$Gene_ID))  |> 
+  group_by(control,Gene_ID)
 
 #Get the mean gene expression for each gene
-df_gene_mean <- summarize(df_gene, mean = mean(Gene_expression))
+merged_final_mean <- summarize(merged_final_0, mean = mean(expression))
 
 #Pivot wide, turning control into two columns with values from mean
-df_gene_mean = pivot_wider(df_gene_mean, names_from = control,
-                           values_from = mean)
+merged_final_mean = pivot_wider(merged_final_mean, names_from = control,
+                                values_from = mean)
 
 #Add column with difference in gene expression between control and non-control
 #For each gene
-df_gene_mean = mutate(df_gene_mean,
-                      diff = `FALSE`-`TRUE`)
+merged_final_mean = mutate(merged_final_mean,
+                           diff = `FALSE`-`TRUE`)
 
 #Join df_gene and df_gene_mean
-df_gene <- left_join(x = df_gene,
-                     y = df_gene_mean,
-                     by = join_by(gene_ID))
+merged_final_0 <- left_join(x = merged_final_0,
+                            y = merged_final_mean,
+                            by = join_by(Gene_ID))
 
-df_gene = ungroup(df_gene)
+merged_final_0 = ungroup(merged_final_0)
 
-df_gene = select(df_gene, gene_ID, `TRUE`, `FALSE`, diff)
-df_gene = pivot_longer(df_gene, col = c(`TRUE`, `FALSE`), names_to = 'control', values_to = 'mean_gene_expression')
-df_gene = distinct(df_gene)
+merged_final_0 = select(merged_final_0, Gene_ID, `TRUE`, `FALSE`, diff)
+merged_final_0 = pivot_longer(merged_final_0, col = c(`TRUE`, `FALSE`), names_to = 'control', values_to = 'mean_gene_expression')
+merged_final_0 = distinct(merged_final_0)
 
-df_gene_0 = df_gene
+merged_final_1 = merged_final_0
+merged_final_1
 
-gene_category <- function(df_gene_0, category, genes) {
+gene_category <- function(merged_final_1, category, genes) {
   if (category == 'random'){
-    Gene_slice <- df_gene_0 |> distinct(gene_ID) |> slice_sample(n = genes)
-    gene_ID_slice <- Gene_slice$gene_ID
-    df_gene <- df_gene_0 |>
-      filter(gene_ID %in% gene_ID_slice)
-    df_gene <- df_gene |> arrange(desc(diff))
-    return (df_gene)
+    Gene_slice <- merged_final_1 |> distinct(Gene_ID) |> slice_sample(n = genes)
+    Gene_ID_slice <- Gene_slice$Gene_ID
+    merged_final_0 <- merged_final_1 |>
+      filter(Gene_ID %in% Gene_ID_slice)
+    merged_final_0 <- merged_final_0 |> arrange(desc(diff))
+    return (merged_final_0)
   }
   else if (category == 'max'){
-    Gene_slice <- df_gene_0 |> slice_max(diff, n = genes*2)
-    gene_ID_slice <- Gene_slice$gene_ID
-    df_gene <- df_gene_0 |>
-      filter(gene_ID %in% gene_ID_slice)
-    df_gene <- df_gene |> arrange(desc(diff))
-    return (df_gene)
+    Gene_slice <- merged_final_1 |> slice_max(diff, n = genes*2)
+    Gene_ID_slice <- Gene_slice$Gene_ID
+    merged_final_0 <- merged_final_1 |>
+      filter(Gene_ID %in% Gene_ID_slice)
+    merged_final_0 <- merged_final_0 |> arrange(desc(diff))
+    return (merged_final_0)
     
   }
   else if (category == 'min'){
-    Gene_slice <- df_gene_0 |> slice_min(diff, n = genes*2)
-    gene_ID_slice <- Gene_slice$gene_ID
-    df_gene <- df_gene_0 |>
-      filter(gene_ID %in% gene_ID_slice)
-    df_gene <- df_gene |> arrange(desc(diff))
-    return (df_gene)
+    Gene_slice <- merged_final_1 |> slice_min(diff, n = genes*2)
+    print(Gene_slice)
+    Gene_ID_slice <- Gene_slice$Gene_ID
+    merged_final_0 <- merged_final_1 |>
+      filter(Gene_ID %in% Gene_ID_slice)
+    merged_final_0 <- merged_final_0 |> arrange(desc(diff))
+    return (merged_final_0)
     
   }
-  else if (category == 'maxmim'){
-    Gene_slice_max <- df_gene_0 |> slice_max(diff, n = genes)
-    Gene_slice_min <- df_gene_0 |> slice_min(diff, n = genes)
-    c(Gene_slice_max$gene_ID,Gene_slice_min$gene_ID)
-    gene_ID_slice <- c(Gene_slice_max$gene_ID,Gene_slice_min$gene_ID)
-    df_gene <- df_gene_0 |>
-      filter(gene_ID %in% gene_ID_slice)
-    df_gene <- df_gene |> arrange(desc(diff))
-    return (df_gene)
+  else if (category == 'maxmin'){
+    Gene_slice_max <- merged_final_1 |> slice_max(diff, n = genes)
+    Gene_slice_min <- merged_final_1 |> slice_min(diff, n = genes)
+    Gene_ID_slice <- c(Gene_slice_max$Gene_ID,Gene_slice_min$Gene_ID)
+    merged_final_0 <- merged_final_1 |>
+      filter(Gene_ID %in% Gene_ID_slice)
+    merged_final_0 <- merged_final_0 |> arrange(desc(diff))
+    return (merged_final_0)
     
   }
 }
-
-
 
 # Define UI for app that draws a histogram ----
 ui <- page_sidebar(
@@ -141,7 +122,7 @@ ui <- page_sidebar(
       choices = list("Randomly picked" = 'random',
                      "Positive difference" = 'max', 
                      "Negative difference" = 'min', 
-                     "Positive and negative difference" = 'maxmim'),
+                     "Positive and negative difference" = 'maxmin'),
       selected = 'random'
     ),
     radioButtons(
@@ -166,10 +147,10 @@ ui <- page_sidebar(
 server <- function(input, output) {
   output$genePlot <- renderPlot({
     
-    df_gene = gene_category(df_gene_0,input$geneCat, input$genes)
+    merged_final_0 = gene_category(merged_final_1,input$geneCat, input$genes)
     
-    ggplot(df_gene) + 
-      geom_boxplot(mapping = aes(x = gene_ID,
+    ggplot(merged_final_0) + 
+      geom_boxplot(mapping = aes(x = Gene_ID,
                                  y = mean_gene_expression,
                                  color = diff)) +
       scale_color_gradient2(low = "red",
@@ -179,7 +160,7 @@ server <- function(input, output) {
       theme(axis.text.x=element_blank())
   })
   output$geneTable = renderTable({
-    gene_category(df_gene_0,input$geneCat, input$genes)
+    gene_category(merged_final_0,input$geneCat, input$genes)
     
   })
   output$descriptiveText <- renderText({
