@@ -1,6 +1,8 @@
 ---
 title: "Presentation"
-format: revealjs
+format:
+  revealjs: 
+    theme: sky
 slide-number: true
 editor: visual
 ---
