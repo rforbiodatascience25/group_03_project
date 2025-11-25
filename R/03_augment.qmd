@@ -150,4 +150,8 @@ merged_final <- second_clean |>
 ```{r}
 show(merged_final)
 summary(merged_final)
+
+write_tsv(x= merged_final,
+          file = file.path(directory,'data/merged_final.tsv'))
 ```
+

@@ -45,9 +45,7 @@ write_tsv(expr_clean, "../data/02_gse54514_expression.tsv.gz")
 write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
 
 #here is the dataset we will focus on:
-meta_untidy <- read_tsv("data/02_gse54514_phenotype_untidy.tsv.gz")
-
-
+meta_untidy <- read_tsv("../data/02_gse54514_phenotype_untidy.tsv.gz")
 ```
 
 ## Now let's do some cleaning!
@@ -110,7 +108,7 @@ head(meta_separated)
 
 **The next step is to pivot from long to wide.**
 
-Currently, eahc sample has multiple rows, we want one row per sample and one column per variable. We use pivot_wider()
+Currently, each sample has multiple rows, we want one row per sample and one column per variable. We use pivot_wider()
 
 ```{r}
 meta_wide <- meta_separated |>
