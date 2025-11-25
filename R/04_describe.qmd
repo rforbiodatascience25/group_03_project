@@ -18,10 +18,13 @@ library("tidyr")
 # Load Data
 
 ```{r}
-data_aug = read_tsv("/net/pupil1/home/people/s194685/projects/Exam_test/data/03_aug_data.tsv")
+data_aug = read_tsv("../data/merged_final.tsv")
+show(merged_final)
 ```
 
 # Describe Data
+
+
 
 ```{r}
 
