@@ -30,19 +30,19 @@ get the data to zipped files
 
 ```{r}
 
-expr_clean <- exprs_data |>
-  as_tibble(rownames = "probe_id")
+#expr_clean <- exprs_data |>
+#  as_tibble(rownames = "probe_id")
 
-pheno_clean <- as_tibble(pheno_data, rownames = "sample_id")
-write_tsv(pheno_clean, "../data/02_gse54514_pheno.tsv.gz")
+#pheno_clean <- as_tibble(pheno_data, rownames = "sample_id")
+#write_tsv(pheno_clean, "../data/02_gse54514_pheno.tsv.gz")
 
-feature_clean <- as_tibble(feature_data, rownames = "probe_id")
-write_tsv(feature_clean, "../data/02_gse54514_annotation.tsv.gz")
+#feature_clean <- as_tibble(feature_data, rownames = "probe_id")
+#write_tsv(feature_clean, "../data/02_gse54514_annotation.tsv.gz")
 
-write_tsv(expr_clean, "../data/02_gse54514_expression.tsv.gz")
+#write_tsv(expr_clean, "../data/02_gse54514_expression.tsv.gz")
 
 
-write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
+#write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
 
 ```
 
