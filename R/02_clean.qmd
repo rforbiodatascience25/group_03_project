@@ -18,36 +18,18 @@ library(readr)
 library(dplyr)
 ```
 
-## Running Code
-
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
 ## Cleaning Data
 
 get the data to zipped files
 
+here is the dataset we will focus on:
+
 ```{r}
-
-expr_clean <- exprs_data |>
-  as_tibble(rownames = "probe_id")
-
-pheno_clean <- as_tibble(pheno_data, rownames = "sample_id")
-write_tsv(pheno_clean, "../data/02_gse54514_pheno.tsv.gz")
-
-feature_clean <- as_tibble(feature_data, rownames = "probe_id")
-write_tsv(feature_clean, "../data/02_gse54514_annotation.tsv.gz")
-
-write_tsv(expr_clean, "../data/02_gse54514_expression.tsv.gz")
-
-
-write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
-
-#here is the dataset we will focus on:
-meta_untidy <- read_tsv("data/02_gse54514_phenotype_untidy.tsv.gz")
-
-
+meta_untidy <- read.table(
+  "../data/01_meta_untidy.tsv",
+  sep = "\t",
+  header = TRUE
+)
 ```
 
 ## Now let's do some cleaning!
@@ -110,7 +92,7 @@ head(meta_separated)
 
 **The next step is to pivot from long to wide.**
 
-Currently, eahc sample has multiple rows, we want one row per sample and one column per variable. We use pivot_wider()
+Currently, each sample has multiple rows, we want one row per sample and one column per variable. We use pivot_wider()
 
 ```{r}
 meta_wide <- meta_separated |>
@@ -160,6 +142,13 @@ meta_clean <- meta_wide |>
 
 ```{r}
 head(meta_clean)
+write.table(
+  meta_clean,
+  file = "../data/02_meta_clean.tsv",
+  sep = "\t",
+  row.names = FALSE,
+  quote = FALSE
+)
 ```
 
 Now that the metadata has been cleaned, the next step is to add the gene expression of some **up-regulated** some **down-regulated** genes for sepsis and some with no variation.
@@ -185,5 +174,5 @@ platform_table_clean <- platform_table_clean |> rename('ILMN_Gene' = ID)
 #platform_table_clean <- platform_table_clean |> filter(Gene_ID %in% gene_list)
 
 write_tsv(x = platform_table_clean, 
-          file = file.path(directory,'data/platform_table_clean.tsv'))
+          file = file.path(directory,'data/02_platform_table_clean.tsv'))
 ```

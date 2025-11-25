@@ -76,12 +76,22 @@ meta_untidy <- lapply(gsms, function(gsm) {
 
 ```
 
+```{r}
+head(meta_untidy)
+
+write.table(
+  meta_untidy,
+  file = "../data/01_meta_untidy.tsv",
+  sep = "\t",
+  row.names = FALSE,
+  quote = FALSE
+)
+```
+
 ## Load Platform
 
 ```{r}
 platform_raw <- getGEO(gse@annotation)
-#load raw_data
-#load("raw_data")
 ```
 
 ```{r}

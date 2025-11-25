@@ -13,16 +13,105 @@ execute:
 
 ```{r}
 library("tidyr")
+library(dplyr)
+library(ggplot2)
 ```
 
 # Load Data
 
 ```{r}
-data_aug = read_tsv("/net/pupil1/home/people/s194685/projects/Exam_test/data/03_aug_data.tsv")
+data_aug = read_tsv("../data/merged_final.tsv")
+show(merged_final)
 ```
 
 # Describe Data
 
+#Understanding the data structure
+
 ```{r}
+str(merged_final)
+summary(merged_final)
+glimpse(merged_final)
+```
+
+#Basic data statistics
+```{r}
+#counting unique genes
+num_genes <- length(unique(merged_final$Gene_ID))
+print(paste("Number of genes:", num_genes))
+#counting samples
+samples_count <- length(unique(merged_final$sample))
+print(paste("Number of samples:", samples_count))
+#number of groups
+cat("Number of samples per group:\n")
+print(table(merged_final$group_id))
+#number of disease status 
+cat("Number of disease status:\n")
+print(table(merged_final$`disease status`))
+#number per day
+cat("Number of days:\n")
+print(table(merged_final$day))
+#counting per gender 
+cat("Number per gender:\n")
+print(table(merged_final$gender))
+#showing the youngest and oldest age
+youngest <- min(merged_final$`age (years)`, na.rm = TRUE)
+oldest   <- max(merged_final$`age (years)`, na.rm = TRUE)
+cat("Youngest age:", youngest, "\n")
+cat("Oldest age:", oldest, "\n")
+```
+
+Summary statistics for expression
+This shows the overall gene expression
+```{r}
+summary(merged_final$expression)
+```
+
+Statistics for each gene
+```{r}
+expr_summary <- merged_final %>% 
+  group_by(Gene_ID) %>% 
+  summarise(
+    mean = mean(expression),
+    sd = sd(expression),
+    median = median(expression),
+    min = min(expression),
+    max = max(expression),
+    n = n()
+  )
+
+#plot 
+ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
+  geom_boxplot(fill = "steelblue") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Mean Expression per Gene",
+    x = "Gene",
+    y = "Mean Expression"
+  )
+```
+
+
+Statistics for neutrophil proportion
+```{r}
+#converting characters to numbers first
+neut_summary <- merged_final %>%
+  mutate(`neutrophil proportion` = as.numeric(`neutrophil proportion`)) %>%
+  group_by(Gene_ID) %>%
+  summarise(
+    mean = mean(`neutrophil proportion`, na.rm = TRUE),
+    sd   = sd(`neutrophil proportion`, na.rm = TRUE),
+    n    = sum(!is.na(`neutrophil proportion`)),
+    .groups = "drop"
+  )
+#visualization
+ggplot(merged_final, aes(x = Gene_ID, y = `neutrophil proportion`)) +
+  geom_boxplot(fill = "steelblue") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Neutrophil proportion distribution per gene", x = "Gene", y = "Proportion")
 
 ```
+
+

@@ -7,3 +7,6 @@ Carlos Sainz(s253695)
 
 This project contains data from:
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54514
+
+Paper related:
+https://pubmed.ncbi.nlm.nih.gov/23807251/ 
