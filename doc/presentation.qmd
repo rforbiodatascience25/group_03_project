@@ -1,25 +1,93 @@
 ---
-title: "Presentation"
-format: revealjs
+title: "Final project"
+format:
+  revealjs: 
+    theme: sky
 slide-number: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
 ---
 
 ## Introduction
 
-Slide 1
+Our project is based on dataset GEOquery **\[GSE54514\]**
+
+And **this** paper
+
+![](images/clipboard-3827441283.png)
 
 ## Materials and Methods
 
-Slide 2
+The raw data:
+
+```{r}
+# Read the TSV file
+meta_untidy <- read.table("../data/01_meta_untidy.tsv",
+                   sep = "\t",
+                   header = TRUE)
+
+library(reactable)
+library(dplyr)
+
+
+reactable(meta_untidy,
+          sortable = TRUE,
+          resizable = TRUE,
+          height = "500px",
+          theme = reactableTheme(
+            style = list(fontSize = "20px")  # shrink text; default is 16px
+          )
+)
+
+cat("dimension =", paste(dim(meta_untidy), collapse=" x "), "\n")
+cat("Number of samples =", length(unique(meta_untidy$sample)), "\n")
+```
 
 ## Materials and Methods
 
-Slide 3
+The raw data
+
+::::: columns
+::: {.column width="65%"}
+```{r}
+library(dplyr)
+library(reactable)
+
+# Make sure sample is character
+meta_untidy <- meta_untidy |> mutate(sample = as.character(sample))
+
+# Show the code as text
+cat('meta_untidy |> filter(sample == "GSM1317921")\n\n')
+
+# Show the interactive table
+meta_untidy |> 
+  filter(sample == "GSM1317921") |> 
+  reactable(
+    height = "500px", 
+    theme = reactableTheme(style = list(fontSize="20px"))
+  )
+
+```
+:::
+
+::: {.column width="35%"}
+But a tidy data set should follow these rules:
+
+-   Every column contains exactly one variable.
+
+-   Every row represents exactly one experimental unit (sample).
+
+-   Every cell contains exactly one measurement.
+:::
+:::::
 
 ## Materials and Methods
 
 Slide 4
+
+#meta_separated \<- meta_untidy \|\> \# separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge") \`\`\`
+
+## Materials and Methods
 
 ## Results
 

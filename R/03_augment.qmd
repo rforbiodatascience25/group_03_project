@@ -1,7 +1,12 @@
 ---
-title: "03_augment"
-format: html
+title: "Exam - Augment Data: Group 03"
+format:
+  html:
+    embed-resources: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
 ---
 
 ## Load libraries
@@ -110,7 +115,7 @@ Some of this gene names have more than 1 illumina gene identifier, so lets obtai
 
 ```{r}
 #Keep only genes of interest
-merged_data <- merged_data |>
+merged_data <- merged_data_clean |>
   filter(!is.na(Gene_ID))
 
 #Average values with same Gene_ID
@@ -143,6 +148,9 @@ show(second_clean)
 Now we can merge them!
 
 ```{r}
+
+meta_clean = read_tsv(file.path('../data/02_meta_clean.tsv'))
+
 merged_final <- second_clean |>
   left_join(meta_clean, by = "sample")
 ```
@@ -152,4 +160,7 @@ merged_final <- second_clean |>
 ```{r}
 show(merged_final)
 summary(merged_final)
+
+write_tsv(x= merged_final,
+          file = file.path('../data/03_merged_final.tsv'))
 ```
