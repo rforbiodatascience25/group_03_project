@@ -76,6 +76,18 @@ meta_untidy <- lapply(gsms, function(gsm) {
 
 ```
 
+```{r}
+head(meta_untidy)
+
+write.table(
+  meta_untidy,
+  file = "../data/meta_untidy.tsv",
+  sep = "\t",
+  row.names = FALSE,
+  quote = FALSE
+)
+```
+
 ## Load Platform
 
 ```{r}

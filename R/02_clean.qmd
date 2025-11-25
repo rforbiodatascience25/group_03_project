@@ -44,8 +44,16 @@ write_tsv(expr_clean, "../data/02_gse54514_expression.tsv.gz")
 
 write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
 
-#here is the dataset we will focus on:
-meta_untidy <- read_tsv("../data/02_gse54514_phenotype_untidy.tsv.gz")
+```
+
+here is the dataset we will focus on:
+
+```{r}
+meta_untidy <- read.table(
+  "../data/meta_untidy.tsv",
+  sep = "\t",
+  header = TRUE
+)
 ```
 
 ## Now let's do some cleaning!
@@ -158,6 +166,13 @@ meta_clean <- meta_wide |>
 
 ```{r}
 head(meta_clean)
+write.table(
+  meta_clean,
+  file = "../data/meta_clean.tsv",
+  sep = "\t",
+  row.names = FALSE,
+  quote = FALSE
+)
 ```
 
 Now that the metadata has been cleaned, the next step is to add the gene expression of some **up-regulated** some **down-regulated** genes for sepsis and some with no variation.
