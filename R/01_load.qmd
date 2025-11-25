@@ -81,7 +81,7 @@ meta_untidy <- lapply(gsms, function(gsm) {
 ```{r}
 platform_raw <- getGEO(gse@annotation)
 #load raw_data
-load("raw_data")
+#load("raw_data")
 ```
 
 ```{r}
