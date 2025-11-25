@@ -21,13 +21,24 @@ meta <- read.table("../data/01_meta_untidy.tsv",
 
 library(reactable)
 
-reactable(meta, 
-          sortable = TRUE)  
+reactable(meta,
+          sortable = TRUE,
+          resizable = TRUE,
+          height = "500px",
+          theme = reactableTheme(
+            style = list(fontSize = "20px")  # shrink text; default is 16px
+          )
+)
+
 ```
 
 ## Materials and Methods
 
 Slide 3
+
+```{r}
+
+```
 
 ## Materials and Methods
 
