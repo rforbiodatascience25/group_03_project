@@ -18,12 +18,6 @@ library(readr)
 library(dplyr)
 ```
 
-## Running Code
-
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
 ## Cleaning Data
 
 get the data to zipped files
