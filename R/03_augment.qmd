@@ -13,7 +13,6 @@ library(readr)
 library(dplyr)
 ```
 
-
 ## Time to add our new genes
 
 Before we had a metadata table, now we will add 15 new genes based on the paper (Pawlikowski JS, McBryan T, van Tuyn J, Drotar ME et al. Wnt signaling potentiates nevogenesis. Proc Natl Acad Sci U S A 2013 Oct 1;110(40):16009-14. PMID: [24043806](https://www.ncbi.nlm.nih.gov/pubmed/24043806 "Link to PubMed record"))
@@ -94,6 +93,9 @@ gene_list <- c(
 if (!("Gene_ID" %in% colnames(merged_data))) {
   stop("The column 'Gene_ID' does not exist in merged_data. Run colnames(merged_data) to inspect the real column names.")
 }
+
+#Before we filter the merged data, we save it
+write_tsv(merged_data,'data/03_merged_unfiltered.tsv')
 
 # Filter the merged data by the gene list
 merged_data_clean <- merged_data %>%
