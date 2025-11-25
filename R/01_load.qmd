@@ -81,7 +81,7 @@ head(meta_untidy)
 
 write.table(
   meta_untidy,
-  file = "../data/meta_untidy.tsv",
+  file = "../data/01_meta_untidy.tsv",
   sep = "\t",
   row.names = FALSE,
   quote = FALSE

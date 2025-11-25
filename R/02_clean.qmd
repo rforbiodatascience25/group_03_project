@@ -50,7 +50,7 @@ here is the dataset we will focus on:
 
 ```{r}
 meta_untidy <- read.table(
-  "../data/meta_untidy.tsv",
+  "../data/01_meta_untidy.tsv",
   sep = "\t",
   header = TRUE
 )
@@ -168,7 +168,7 @@ meta_clean <- meta_wide |>
 head(meta_clean)
 write.table(
   meta_clean,
-  file = "../data/meta_clean.tsv",
+  file = "../data/02_meta_clean.tsv",
   sep = "\t",
   row.names = FALSE,
   quote = FALSE
