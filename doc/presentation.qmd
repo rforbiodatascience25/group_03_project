@@ -13,6 +13,18 @@ Slide 1
 
 Slide 2
 
+```{r}
+# Read the TSV file
+meta <- read.table("../data/01_meta_untidy.tsv",
+                   sep = "\t",
+                   header = TRUE)
+
+library(reactable)
+
+reactable(meta, 
+          sortable = TRUE)  
+```
+
 ## Materials and Methods
 
 Slide 3
