@@ -307,5 +307,8 @@ We then remove repeated rows and save it
 merged_pheno_control <- merged_pheno_control |> 
   distinct()
 
-write_tsv(merged_pheno_control,"~/data/merged_shiny.tsv")
+
+write_tsv(x = merged_pheno_control, 
+          file = "~/data/merged_shiny.tsv")
+
 ```

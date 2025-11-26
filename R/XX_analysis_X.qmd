@@ -23,7 +23,7 @@ library(GEOquery)
 # Load Data
 
 ```{r}
-merged_shiny = read_tsv("./merged_shiny.tsv")
+merged_shiny = read_tsv("../data/merged_shiny.tsv")
 ```
 
 # Import Function
@@ -107,7 +107,7 @@ server <- function(input, output) {
 
 ```
 
-Running the App
+# Running the App
 
 ```{r}
 shinyApp(ui = ui, server = server)
