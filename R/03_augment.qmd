@@ -100,7 +100,7 @@ if (!("Gene_ID" %in% colnames(merged_data))) {
 }
 
 #Before we filter the merged data, we save it
-write_tsv(merged_data,'data/03_merged_unfiltered.tsv')
+write_tsv(merged_data,'~/data/03_merged_unfiltered.tsv')
 
 # Filter the merged data by the gene list
 merged_data_clean <- merged_data %>%
