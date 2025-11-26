@@ -13,12 +13,13 @@ execute:
 
 ```{r}
 library("tidyr")
+library("tidyverse")
 ```
 
 # Load Data
 
 ```{r}
-data_aug = read_tsv("/net/pupil1/home/people/s194685/projects/Exam_test/data/03_aug_data.tsv")
+
 ```
 
 # Analyse Data

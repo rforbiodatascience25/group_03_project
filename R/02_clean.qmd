@@ -45,9 +45,12 @@ write_tsv(meta_untidy, "../data/02_gse54514_phenotype_untidy.tsv.gz")
 #here is the dataset we will focus on:
 meta_untidy <- read_tsv("data/02_gse54514_phenotype_untidy.tsv.gz")
 
+```
+
 here is the dataset we will focus on:
 
 ```{r}
+
 meta_untidy <- read.table(
   "../data/01_meta_untidy.tsv",
   sep = "\t",
