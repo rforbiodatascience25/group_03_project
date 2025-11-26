@@ -12,9 +12,11 @@ execute:
 # Load Libraries
 
 ```{r}
+#install.packages("readr")     
 library("tidyr")
 library(dplyr)
 library(ggplot2)
+library(readr)
 ```
 
 # Load Data
@@ -113,5 +115,6 @@ ggplot(merged_final, aes(x = Gene_ID, y = `neutrophil proportion`)) +
   labs(title = "Neutrophil proportion distribution per gene", x = "Gene", y = "Proportion")
 
 ```
+
 
 
