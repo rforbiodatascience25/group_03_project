@@ -23,6 +23,7 @@ library(dplyr)
 here is the dataset we will focus on:
 
 ```{r}
+
 meta_untidy <- read.table(
   "../data/01_meta_untidy.tsv",
   sep = "\t",

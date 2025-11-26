@@ -49,6 +49,7 @@ merged_day1 <- merged_prepared |>
 merged_day1 |>
   count(disease_status)
 ```
+
 ```{r fig.width=10, fig.height=7}
 merged_day1 |>
   ggplot(aes(
@@ -78,6 +79,7 @@ merged_day1 |>
     fill = "Disease status"
   )
 ```
+
 ```{r}
 # Filter to only sepsis samples
 sepsis_day1 <- merged_prepared |>
@@ -189,4 +191,4 @@ ggplot(survival_results, aes(
   )
 ```
 
-Interpretation: 
+Interpretation:
