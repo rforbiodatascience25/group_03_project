@@ -65,6 +65,109 @@ But a tidy data set should follow these rules:
 ## Materials and Methods
 
 ```{r}
+gene_expression <- read_tsv("../data/expression_data.tsv")
+gene_names <- read_tsv("../data/platform_table_clean.tsv")
+
+#Rename so both have the same ILMN_ID
+expression_data <- gene_expression |>
+  rename(ILMN_ID = gene_ID)
+
+annotation_data <- gene_names |>
+  rename(ILMN_ID = ILMN_Gene)
+
+merged_data <- expression_data |>
+  left_join(annotation_data, by = "ILMN_ID")
+
+gene_list <- c(
+  "MAPK1","LFT","SOCS1","RELB","GNB4","B2M","IRAK4","WIPF1",
+  "CD8A","CD2","ELK1","CD3E","TRIM44","UGT2B7","TCP1","ORC1L","NEK1"
+)
+
+# Check that the column Gene_ID exists in merged_data
+if (!("Gene_ID" %in% colnames(merged_data))) {
+  stop("The column 'Gene_ID' does not exist in merged_data.")
+}
+
+merged_data_clean <- merged_data %>%
+  dplyr::filter(Gene_ID %in% gene_list)
+
+#Keep only genes of interest
+merged_data_clean <- merged_data_clean |>
+  filter(!is.na(Gene_ID))
+
+#Average values with same Gene_ID
+clean_data <- merged_data_clean |>
+  group_by(Gene_ID) |>
+  summarise(across(starts_with("GSM"), mean, na.rm = TRUE)) |>
+            ungroup()
+
+meta_clean = read_tsv(file.path("../data/02_meta_clean.tsv"))
+```
+
+:::::: columns
+:::: {.column width="45%"}
+::: {style="font-size: 0.6em;"}
+Merge `gene_names` and `expression_data`
+
+``` r
+merged_data <- expression_data |>
+  left_join(annotation_data, by = "ILMN_ID")
+```
+
+Filter so it is only genes of interest
+
+``` r
+merged_data_clean <- merged_data |>
+  dplyr::filter(Gene_ID %in% gene_list)
+```
+
+If gene has more than 1 `ILMN_ID`, get average of gene expression
+
+``` r
+clean_data <- merged_data_clean |>
+  group_by(Gene_ID) |>
+  summarise(across(starts_with("GSM"), mean, na.rm = TRUE)) |>
+  ungroup()
+```
+
+Pivot and merge by `sample`
+
+``` r
+second_clean <- clean_data |>
+  pivot_longer(
+    cols = starts_with("GSM"),
+    names_to = "sample",
+    values_to = "expression"
+  )
+
+merged_final <- second_clean |>
+  left_join(meta_clean, by = "sample")
+```
+:::
+::::
+
+::: {.column width="55%"}
+```{r}
+mf <- read_tsv("../data/03_merged_final.tsv")
+
+reactable(
+  mf,
+  sortable = TRUE,
+  resizable = TRUE,
+  height = "600px",
+  theme = reactableTheme(
+    style = list(fontSize = "20px")
+  )
+)
+
+cat("dimension =", paste(dim(mf), collapse=" x "), "\n")
+```
+:::
+::::::
+
+## Materials and Methods
+
+```{r}
 meta_separated <- meta_untidy |>
   separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge")
 
@@ -125,8 +228,6 @@ reactable(meta_clean,
             style = list(fontSize = "20px")  # shrink text; default is 16px
           )
 )
-
-cat("dimension =", paste(dim(meta_clean), collapse=" x "), "\n")
 ```
 :::
 ::::::
@@ -201,7 +302,7 @@ Expression data: sample, expression
 ## Results
 
 ```{r}
-merged_shiny = read_tsv("~/data/merged_shiny.tsv")
+merged_shiny = read_tsv("../data/merged_shiny.tsv")
 
 reactable(merged_shiny,
           sortable = TRUE,
@@ -211,10 +312,6 @@ reactable(merged_shiny,
                                  )
           )
 ```
-
-## Results
-
-Slide 6
 
 ## Results
 

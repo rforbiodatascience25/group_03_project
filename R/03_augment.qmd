@@ -37,12 +37,8 @@ Before we had a metadata table, now we will add 15 new genes based on the paper 
 ### First, we load the gene expression matrix
 
 ```{r}
-#setwd("..")
-#gene_expression <- read_tsv("data/expression_data.tsv")
-#head(gene_expression)
 gene_expression <- read_tsv("../data/expression_data.tsv")
 head(gene_expression)
-
 ```
 
 We need to filter this table for the genes of interest previously mentioned only..
@@ -67,7 +63,6 @@ Join both tables, by renaming columns and merging
 #Rename so both have the same ILMN_ID
 expression_data <- gene_expression |>
   rename(ILMN_ID = gene_ID)
-  #rename(ILMN_ID = probeID)
 
 annotation_data <- gene_names |>
   rename(ILMN_ID = ILMN_Gene)
@@ -302,6 +297,6 @@ merged_pheno_control <- merged_pheno_control |>
 
 
 write_tsv(x = merged_pheno_control, 
-          file = "~/data/merged_shiny.tsv")
+          file = "../data/merged_shiny.tsv")
 
 ```
