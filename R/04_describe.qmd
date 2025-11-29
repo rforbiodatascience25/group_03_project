@@ -12,15 +12,21 @@ execute:
 # Load Libraries
 
 ```{r}
+#install.packages("readr")     
 library("tidyr")
 library(dplyr)
 library(ggplot2)
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
 ```
 
 # Load Data
 
 ```{r}
-data_aug = read_tsv("../data/merged_final.tsv")
+merged_final <- read_tsv("../data/03_merged_final.tsv")
 show(merged_final)
 ```
 
@@ -35,6 +41,7 @@ glimpse(merged_final)
 ```
 
 #Basic data statistics
+
 ```{r}
 #counting unique genes
 num_genes <- length(unique(merged_final$Gene_ID))
@@ -61,13 +68,14 @@ cat("Youngest age:", youngest, "\n")
 cat("Oldest age:", oldest, "\n")
 ```
 
-Summary statistics for expression
-This shows the overall gene expression
+Summary statistics for expression This shows the overall gene expression
+
 ```{r}
 summary(merged_final$expression)
 ```
 
 Statistics for each gene
+
 ```{r}
 expr_summary <- merged_final %>% 
   group_by(Gene_ID) %>% 
@@ -92,8 +100,8 @@ ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
   )
 ```
 
-
 Statistics for neutrophil proportion
+
 ```{r}
 #converting characters to numbers first
 neut_summary <- merged_final %>%
@@ -113,5 +121,6 @@ ggplot(merged_final, aes(x = Gene_ID, y = `neutrophil proportion`)) +
   labs(title = "Neutrophil proportion distribution per gene", x = "Gene", y = "Proportion")
 
 ```
+
 
 

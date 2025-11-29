@@ -1,5 +1,5 @@
 ---
-title: "Exam - Analysis Data Part 2: Group 03"
+title: "Exam - Analysis Data Part X: Group 03"
 format:
   html:
     embed-resources: true
@@ -18,7 +18,6 @@ library(shiny)
 library(bslib)
 library(tidyverse)
 library(GEOquery)
-library(rsconnect)
 ```
 
 # Load Data
@@ -55,7 +54,7 @@ ui <- page_sidebar(
       choices = list("Randomly picked" = 'random',
                      "Positive difference" = 'max', 
                      "Negative difference" = 'min', 
-                     "Minimal difference" = 'mid'),
+                     "Positive and negative difference" = 'maxmin'),
       selected = 'random'
     ),
     radioButtons(
@@ -75,6 +74,7 @@ ui <- page_sidebar(
     tableOutput(outputId = "geneTable")
   )
 )
+
 ```
 
 # Server
