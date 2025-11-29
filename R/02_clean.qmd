@@ -20,11 +20,10 @@ library(dplyr)
 
 ## Cleaning Data
 
-get the data to zipped files
-
 here is the dataset we will focus on:
 
 ```{r}
+
 meta_untidy <- read.table(
   "../data/01_meta_untidy.tsv",
   sep = "\t",
@@ -156,23 +155,16 @@ Now that the metadata has been cleaned, the next step is to add the gene express
 # Clean Platform table
 
 ```{r}
-directory = getwd()
-if (str_sub(directory,-1) == 'R'){
-  directory = str_sub(directory,1,-3)
-}
-directory
+platform_table = read_tsv('~/data/platform_table.tsv')
 
-platform_table = read_tsv(file.path(directory,'data/platform_table.tsv'))
-
+#Convert platform table into a tibble
 platform_table_clean <- tibble(ID = platform_table$ID,
                                ILMN_Gene = platform_table$ILMN_Gene)
 
+#Change the column names
 platform_table_clean <- platform_table_clean |> rename('Gene_ID' = ILMN_Gene)
 platform_table_clean <- platform_table_clean |> rename('ILMN_Gene' = ID)
 
-#gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
-#platform_table_clean <- platform_table_clean |> filter(Gene_ID %in% gene_list)
-
 write_tsv(x = platform_table_clean, 
-          file = file.path(directory,'data/02_platform_table_clean.tsv'))
+          file = '~/data/02_platform_table_clean.tsv')
 ```

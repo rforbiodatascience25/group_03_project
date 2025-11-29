@@ -1,11 +1,41 @@
+---
+title: "Exam - Analysis Data Part X: Group 03"
+format:
+  html:
+    embed-resources: true
+editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
+---
+
+This is for the shiny, I will change the name latter
+
+# Load Libraries
+
+```{r}
 library(shiny)
 library(bslib)
 library(tidyverse)
 library(GEOquery)
+```
 
-merged_shiny = read_tsv("merged_shiny.tsv")
+# Load Data
 
+```{r}
+merged_shiny = read_tsv("../data/merged_shiny.tsv")
+```
+
+# Import Function
+
+```{r}
+#Import function gene_category
 source("../R/99_proj_func.R")
+```
+
+# UI
+
+```{r}
 
 ui <- page_sidebar(
   title = 'Boxplot showing difference in gene expression between non-control and control.',
@@ -45,6 +75,11 @@ ui <- page_sidebar(
   )
 )
 
+```
+
+# Server
+
+```{r}
 
 server <- function(input, output) {
   output$genePlot <- renderPlot({
@@ -70,4 +105,10 @@ server <- function(input, output) {
   })
 }
 
+```
+
+# Running the App
+
+```{r}
 shinyApp(ui = ui, server = server)
+```

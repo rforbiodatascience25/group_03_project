@@ -1,15 +1,20 @@
 ---
-title: "Presentation"
+title: "Final project"
 format:
   revealjs: 
     theme: sky
 slide-number: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
 ---
 
 ## Introduction
 
-Slide 1
+Our project is based on dataset GEOquery **\[GSE54514\]**
+
+And **this** paper
+
+![](images/clipboard-3827441283.png)
 
 ## Materials and Methods
 
