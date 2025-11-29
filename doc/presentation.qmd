@@ -23,8 +23,13 @@ meta_untidy <- read.table("../data/01_meta_untidy.tsv",
 
 library(reactable)
 library(dplyr)
+library(tidyverse)
+library(tibble)
+```
 
-
+:::::: columns
+::: {.column width="65%"}
+```{r}
 reactable(meta_untidy,
           sortable = TRUE,
           resizable = TRUE,
@@ -37,35 +42,10 @@ reactable(meta_untidy,
 cat("dimension =", paste(dim(meta_untidy), collapse=" x "), "\n")
 cat("Number of samples =", length(unique(meta_untidy$sample)), "\n")
 ```
-
-## Materials and Methods
-
-The raw data
-
-::::: columns
-::: {.column width="65%"}
-```{r}
-library(dplyr)
-library(reactable)
-
-# Make sure sample is character
-meta_untidy <- meta_untidy |> mutate(sample = as.character(sample))
-
-# Show the code as text
-cat('meta_untidy |> filter(sample == "GSM1317921")\n\n')
-
-# Show the interactive table
-meta_untidy |> 
-  filter(sample == "GSM1317921") |> 
-  reactable(
-    height = "500px", 
-    theme = reactableTheme(style = list(fontSize="20px"))
-  )
-
-```
 :::
 
-::: {.column width="35%"}
+:::: {.column width="35%"}
+::: {style="font-size: 0.7em;"}
 But a tidy data set should follow these rules:
 
 -   Every column contains exactly one variable.
@@ -74,15 +54,78 @@ But a tidy data set should follow these rules:
 
 -   Every cell contains exactly one measurement.
 :::
+::::
+::::::
+
+## Materials and Methods
+
+
+```{r}
+meta_separated <- meta_untidy |>
+  separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge")
+
+meta_wide <- meta_separated |>
+  pivot_wider(names_from = key, values_from = value)
+
+meta_wide <- meta_wide |>
+  mutate_all(~ ifelse(. == "NA", NA, .))
+
+meta_wide <- meta_wide |> select(-tissue)
+
+meta_clean <- meta_wide |>
+  separate(group_day, into = c("group_temp", "day"), sep = "_", remove = TRUE) |>
+  select(-group_temp)
+```
+
+::::: columns
+::: {.column width="45%"}
+::: {style="font-size: 0.7em;"}
+Separate `characteristics` into key/value pairs
+```r
+meta_separated <- meta_untidy |>
+  separate(characteristics, into = c("key", "value"), sep = ": ")
+```
+Convert long format to wide format
+```r
+meta_wide <- meta_separated |>
+  pivot_wider(names_from = key, values_from = value)
+```
+Replace string `"NA"` with actual `NA`
+```r
+meta_wide <- meta_wide |>
+  mutate_all(~ ifelse(. == "NA", NA, .))
+```
+Split `group_day` into two variables
+```r
+meta_clean <- meta_wide |>
+  separate(group_day, into = c("group_temp", "day"), sep = "_", remove = TRUE) |>
+  select(-group_temp)
+```
+
+:::
+:::
+
+::: {.column width="55%"}
+
+
+```{r}
+reactable(meta_clean,
+          sortable = TRUE,
+          resizable = TRUE,
+          height = "600px",
+          theme = reactableTheme(
+            style = list(fontSize = "20px")  # shrink text; default is 16px
+          )
+)
+
+cat("dimension =", paste(dim(meta_clean), collapse=" x "), "\n")
+```
+:::
 :::::
 
 ## Materials and Methods
 
 Slide 4
-
-#meta_separated \<- meta_untidy \|\> \# separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge") \`\`\`
-
-## Materials and Methods
 
 ## Results
 
