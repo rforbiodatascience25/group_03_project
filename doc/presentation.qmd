@@ -64,7 +64,6 @@ But a tidy data set should follow these rules:
 
 ## Materials and Methods
 
-
 ```{r}
 meta_separated <- meta_untidy |>
   separate(characteristics, into = c("key", "value"), sep = ": ", extra = "merge")
@@ -82,37 +81,41 @@ meta_clean <- meta_wide |>
   select(-group_temp)
 ```
 
-::::: columns
-::: {.column width="45%"}
+:::::: columns
+:::: {.column width="45%"}
 ::: {style="font-size: 0.7em;"}
 Separate `characteristics` into key/value pairs
-```r
+
+``` r
 meta_separated <- meta_untidy |>
   separate(characteristics, into = c("key", "value"), sep = ": ")
 ```
+
 Convert long format to wide format
-```r
+
+``` r
 meta_wide <- meta_separated |>
   pivot_wider(names_from = key, values_from = value)
 ```
+
 Replace string `"NA"` with actual `NA`
-```r
+
+``` r
 meta_wide <- meta_wide |>
   mutate_all(~ ifelse(. == "NA", NA, .))
 ```
+
 Split `group_day` into two variables
-```r
+
+``` r
 meta_clean <- meta_wide |>
   separate(group_day, into = c("group_temp", "day"), sep = "_", remove = TRUE) |>
   select(-group_temp)
 ```
-
 :::
-:::
+::::
 
 ::: {.column width="55%"}
-
-
 ```{r}
 reactable(meta_clean,
           sortable = TRUE,
@@ -126,15 +129,88 @@ reactable(meta_clean,
 cat("dimension =", paste(dim(meta_clean), collapse=" x "), "\n")
 ```
 :::
-:::::
+::::::
 
 ## Materials and Methods
 
-Slide 4
+```{r}
+pheno_data <- read_tsv("../data/phenotype_data.tsv")
+
+pheno_data_control <- pheno_data |> 
+  mutate(control = str_detect(title, '(Control)'))  |> 
+  mutate(control = factor(control, levels = c(TRUE, FALSE)))  |> 
+  group_by(control)
+
+pheno_data_control <- pheno_data_control  |> 
+  select(geo_accession, control)
+
+merged_final_unfiltered = read_tsv(file.path("../data/03_merged_final_unfiltered.tsv"))
+
+merged_unfiltered <- merged_final_unfiltered |> 
+  select(Gene_ID, 
+         sample, 
+         expression)
+
+merged_pheno_control <- merged_unfiltered |> 
+  left_join(y = pheno_data_control,
+            by = join_by(sample == geo_accession))
+
+```
+
+::::: columns
+::: {.column width="50%" style="font-size: 0.7em;"}
+Which `samples` are in the `control` group
+
+``` r
+pheno_data_control <- pheno_data |> 
+  mutate(control = str_detect(title, '(Control)'))  |> 
+  mutate(control = factor(control, levels = c(TRUE, FALSE)))  |> 
+  group_by(control)
+```
+
+Merge `phenotype data`, `expression data` and `platform data`
+
+``` r
+merged_pheno_control <- merged_unfiltered |> 
+  left_join(y = pheno_data_control,
+            by = join_by(sample == geo_accession))
+```
+:::
+
+::: {.column width="50%" style="font-size: 0.7em;"}
+```{r}
+merged_pheno_control |> slice_sample(n = 1000) |>
+  reactable(sortable = TRUE,
+            resizable = TRUE,
+            height = "600px",
+            theme = reactableTheme(style = list(fontSize = "20px")
+                                   )
+            )
+```
+:::
+:::::
+
+::: notes
+Feature data: Gene_ID, sample
+
+Phenotype data: sample, control
+
+Expression data: sample, expression
+:::
 
 ## Results
 
-Slide 5
+```{r}
+merged_shiny = read_tsv("~/data/merged_shiny.tsv")
+
+reactable(merged_shiny,
+          sortable = TRUE,
+          resizable = TRUE,
+          height = "600px",
+          theme = reactableTheme(style = list(fontSize = "20px")
+                                 )
+          )
+```
 
 ## Results
 
