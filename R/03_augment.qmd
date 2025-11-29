@@ -82,12 +82,6 @@ head(merged_data)
 However, we stated in the beginning that we are only interested in certain genes, so lets select those so it's easier to work with
 
 ```{r}
-#gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
-
-#merged_data <- merged_data |> filter(Gene_ID %in% gene_list)
-
-#show(merged_data_clean)
-
 # List of genes of interest
 gene_list <- c(
   "MAPK1","LFT","SOCS1","RELB","GNB4","B2M","IRAK4","WIPF1",
@@ -96,7 +90,7 @@ gene_list <- c(
 
 # Check that the column Gene_ID exists in merged_data
 if (!("Gene_ID" %in% colnames(merged_data))) {
-  stop("The column 'Gene_ID' does not exist in merged_data. Run colnames(merged_data) to inspect the real column names.")
+  stop("The column 'Gene_ID' does not exist in merged_data.")
 }
 
 # Filter the merged data by the gene list
@@ -105,7 +99,6 @@ merged_data_clean <- merged_data %>%
 
 # Display the result
 print(merged_data_clean)
-
 ```
 
 Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
