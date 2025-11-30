@@ -68,7 +68,8 @@ cat("Youngest age:", youngest, "\n")
 cat("Oldest age:", oldest, "\n")
 ```
 
-Summary statistics for expression This shows the overall gene expression
+Summary statistics for expression.
+This shows the overall gene expression
 
 ```{r}
 summary(merged_final$expression)
@@ -90,7 +91,8 @@ expr_summary <- merged_final %>%
 
 #plot 
 ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
-  geom_boxplot(fill = "steelblue") +
+  geom_col(fill = "steelblue") +
+  scale_y_continuous(expand = c(0, 0))  +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(
