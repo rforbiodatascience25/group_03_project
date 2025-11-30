@@ -204,7 +204,8 @@ Remove all column except geo_accession and control
 
 ```{r}
 pheno_data_control <- pheno_data_control  |> 
-  select(geo_accession, control)
+  select(geo_accession, 
+         control)
 ```
 
 ### Augmenting for shiny
@@ -262,7 +263,7 @@ merged_mean <- merged_mean |>
 #Add column with difference in gene expression between control and non-control
 #For each gene
 merged_mean <- merged_mean |> 
-  mutate(diff = `FALSE`-`TRUE`)
+  mutate(difference_mean_gene_expression = `FALSE`-`TRUE`)
 ```
 
 Then we join merged_mean and merged_pheno_control
@@ -283,7 +284,7 @@ merged_pheno_control <- merged_pheno_control |>
   select(Gene_ID, 
          `TRUE`, 
          `FALSE`, 
-         diff)
+         difference_mean_gene_expression)
 
 merged_pheno_control <- merged_pheno_control |> 
   pivot_longer(col = c(`TRUE`, `FALSE`), 
