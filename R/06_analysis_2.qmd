@@ -23,7 +23,7 @@ library(GEOquery)
 # Load Data
 
 ```{r}
-merged_shiny = read_tsv("../data/merged_shiny.tsv")
+merged_shiny = read_tsv("../data/03_merged_shiny.tsv")
 ```
 
 # Import Function
@@ -38,7 +38,7 @@ source("../R/99_proj_func.R")
 ```{r}
 
 ui <- page_sidebar(
-  title = 'Boxplot showing difference in gene expression between non-control and control.',
+  title = "Boxplot showing difference in gene expression between non-control and control.",
   sidebar = sidebar(
     sliderInput(
       inputId = "genes",
@@ -51,17 +51,17 @@ ui <- page_sidebar(
     radioButtons(
       "geneCat",
       "Do you want your genes to be..",
-      choices = list("Randomly picked" = 'random',
-                     "Positive difference" = 'max', 
-                     "Negative difference" = 'min', 
-                     "Minimal difference" = 'mid'),
-      selected = 'random'
+      choices = list("Randomly picked" = "random",
+                     "Positive difference" = "max", 
+                     "Negative difference" = "min", 
+                     "Minimal difference" = "mid"),
+      selected = "random"
     ),
     radioButtons(
       "plotOrtable",
       "Do you want to show?",
-      choices = list('Plot', 'Table'),
-      selected = 'Plot'
+      choices = list("Plot", "Table"),
+      selected = "Plot"
     )
   ),
   conditionalPanel(

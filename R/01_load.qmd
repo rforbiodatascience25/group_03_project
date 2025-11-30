@@ -111,7 +111,7 @@ write.table(
 ```{r}
 # Load Platform
 platform_raw <- getGEO(gse@annotation)
-platform_table = platform_raw@dataTable@table
+platform_table <- platform_raw@dataTable@table
 
 #Write Platform
 write_tsv(x = platform_table, 

@@ -16,68 +16,68 @@ library(quarto)
 library(stringr)
 ```
 
-# Load Functions
-
-```{r}
-directory = getwd()
-if (str_sub(directory,-1) == 'R'){
-  directory = str_sub(directory,1,-3)
-}
-
-```
-
 # Render all Quarto Documents
 
 ## Render Load
 
 ```{r}
+quarto_render(input = "01_load.qmd",
+              output_file = "01_load.html")
 
-quarto_render(input = '01_load.qmd',output_file = '01_load.html')
-
-file.rename(from = paste0(directory,'/R/01_load.html'),to = paste0(directory,'/results/01_load.html'))
+file.rename(from = "01_load.html",
+            to = "../results/01_load.html")
 ```
 
 ## Render Clean
 
 ```{r}
+quarto_render(input = "02_clean.qmd",
+              output_file = "02_clean.html")
 
-quarto_render(input = '02_clean.qmd',output_file = '02_clean.html')
-
-file.rename(from= paste0(directory,'/R/02_clean.html'),to= paste0(directory,'/results/02_clean.html'))
+file.rename(from = "02_clean.html",
+            to = "../results/02_clean.html")
 ```
 
 ## Render Augment
 
 ```{r}
 
-quarto_render(input = '03_augment.qmd',output_file = '03_augment.html')
+quarto_render(input = "03_augment.qmd",
+              output_file = "03_augment.html")
 
-file.rename(from= paste0(directory,'/R/03_augment.html'),to= paste0(directory,'/results/03_augment.html'))
+file.rename(from = "03_augment.html",
+            to = "../results/03_augment.html")
 ```
 
 ## Render Describe
 
 ```{r}
 
-quarto_render(input = '04_describe.qmd',output_file = '04_describe.html')
+quarto_render(input = "04_describe.qmd",
+              output_file = "04_describe.html")
 
-file.rename(from= paste0(directory,'/R/04_describe.html'),to= paste0(directory,'/results/04_describe.html'))
+file.rename(from = "04_describe.html",
+            to = "../results/04_describe.html")
 ```
 
 ## Render Analysis 1
 
 ```{r}
 
-quarto_render(input = '05_analysis_1.qmd',output_file = '05_analysis_1.html')
+quarto_render(input = "05_analysis_1.qmd",
+              output_file = "05_analysis_1.html")
 
-file.rename(from= paste0(directory,'/R/05_analysis_1.html'),to= paste0(directory,'/results/05_analysis_1.html'))
+file.rename(from = "05_analysis_1.html",
+            to = "../results/05_analysis_1.html")
 ```
 
 ## Render Analysis 2
 
 ```{r}
 
-quarto_render(input = '06_analysis_2.qmd',output_file = '06_analysis_2.html')
+quarto_render(input = "06_analysis_2.qmd",
+              output_file = "06_analysis_2.html")
 
-file.rename(from= paste0(directory,'/R/06_analysis_2.html'),to= paste0(directory,'/results/06_analysis_2.html'))
+file.rename(from = "06_analysis_2.html",
+            to = "../results/06_analysis_2.html")
 ```
