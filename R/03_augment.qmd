@@ -1,7 +1,12 @@
 ---
-title: "03_augment"
-format: html
+title: "Exam - Augment Data: Group 03"
+format:
+  html:
+    embed-resources: true
 editor: visual
+author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
+execute:
+  warning: false
 ---
 
 ## Load libraries
@@ -12,7 +17,6 @@ library(tibble)
 library(readr)
 library(dplyr)
 ```
-
 
 ## Time to add our new genes
 
@@ -33,12 +37,8 @@ Before we had a metadata table, now we will add 15 new genes based on the paper 
 ### First, we load the gene expression matrix
 
 ```{r}
-#setwd("..")
-#gene_expression <- read_tsv("data/expression_data.tsv")
-#head(gene_expression)
 gene_expression <- read_tsv("../data/expression_data.tsv")
 head(gene_expression)
-
 ```
 
 We need to filter this table for the genes of interest previously mentioned only..
@@ -63,7 +63,6 @@ Join both tables, by renaming columns and merging
 #Rename so both have the same ILMN_ID
 expression_data <- gene_expression |>
   rename(ILMN_ID = gene_ID)
-  #rename(ILMN_ID = probeID)
 
 annotation_data <- gene_names |>
   rename(ILMN_ID = ILMN_Gene)
@@ -78,12 +77,6 @@ head(merged_data)
 However, we stated in the beginning that we are only interested in certain genes, so lets select those so it's easier to work with
 
 ```{r}
-#gene_list = c('MAPK1','LFT','SOCS1','RELB','GNB4','B2M','IRAK4','WIPF1','CD8A','CD2','ELK1','CD3E','TRIM44','UGT2B7','TCP1','ORC1L','NEK1')
-
-#merged_data <- merged_data |> filter(Gene_ID %in% gene_list)
-
-#show(merged_data_clean)
-
 # List of genes of interest
 gene_list <- c(
   "MAPK1","LFT","SOCS1","RELB","GNB4","B2M","IRAK4","WIPF1",
@@ -92,8 +85,11 @@ gene_list <- c(
 
 # Check that the column Gene_ID exists in merged_data
 if (!("Gene_ID" %in% colnames(merged_data))) {
-  stop("The column 'Gene_ID' does not exist in merged_data. Run colnames(merged_data) to inspect the real column names.")
+  stop("The column 'Gene_ID' does not exist in merged_data.")
 }
+
+#Before we filter the data, we want to save the unfiltered
+merged_data_unfiltered = merged_data
 
 # Filter the merged data by the gene list
 merged_data_clean <- merged_data %>%
@@ -101,14 +97,13 @@ merged_data_clean <- merged_data %>%
 
 # Display the result
 print(merged_data_clean)
-
 ```
 
 Some of this gene names have more than 1 illumina gene identifier, so lets obtain an average gene expression for these gene names
 
 ```{r}
 #Keep only genes of interest
-merged_data <- merged_data |>
+merged_data <- merged_data_clean |>
   filter(!is.na(Gene_ID))
 
 #Average values with same Gene_ID
@@ -141,6 +136,9 @@ show(second_clean)
 Now we can merge them!
 
 ```{r}
+
+meta_clean = read_tsv(file.path("../data/02_meta_clean.tsv"))
+
 merged_final <- second_clean |>
   left_join(meta_clean, by = "sample")
 ```
@@ -151,9 +149,156 @@ merged_final <- second_clean |>
 show(merged_final)
 summary(merged_final)
 
-write_tsv(x= merged_final,
-          file = file.path(directory,'data/merged_final.tsv'))
+write_tsv(x = merged_final,
+          file = file.path("../data/03_merged_final.tsv"))
 ```
 
+### Augmenting the unfiltered data
+
+We make the same changed to the unfiltered data, as we did to the filtered data
+
+```{r}
+clean_data_unfiltered <- merged_data_unfiltered |>
+  group_by(Gene_ID) |>
+  summarise(across(starts_with("GSM"), mean, na.rm = TRUE)) |>
+            ungroup()
+
+second_clean_unfiltered <- clean_data_unfiltered |>
+  pivot_longer(
+    cols = starts_with("GSM"),
+    names_to = "sample",
+    values_to = "expression"
+  )
+
+merged_final_unfiltered <- second_clean_unfiltered |>
+  left_join(meta_clean, by = "sample")
+```
+
+Then we save it
+
+```{r}
+write_tsv(x = merged_final_unfiltered,
+          file = file.path("../data/03_merged_final_unfiltered.tsv"))
+```
+
+### Augment Phenotype data
+
+Read phenotype data
+
+```{r}
+pheno_data <- read_tsv("../data/phenotype_data.tsv")
+```
+
+Detect which rows has the word 'Control' in the title column. If they do, for the new column 'control', equal TRUE, if not, equal FALSE.
+
+```{r}
+pheno_data_control <- pheno_data |> 
+  mutate(control = str_detect(title, 
+                              '(Control)'))  |> 
+  mutate(control = factor(control, 
+                          levels = c(TRUE, FALSE)))  |> 
+  group_by(control)
+```
+
+Remove all column except geo_accession and control
+
+```{r}
+pheno_data_control <- pheno_data_control  |> 
+  select(geo_accession, control)
+```
+
+### Augmenting for shiny
+
+We want to use merged_final_unfiltered for the shiny. For this, we remove unnecessary columns
+
+```{r}
+merged_unfiltered <- merged_final_unfiltered |> 
+  select(Gene_ID, 
+         sample, 
+         expression)
+```
+
+Merge merged_unfiltered and pheno_data_control
+
+```{r}
+merged_pheno_control <- merged_unfiltered |> 
+  left_join(y = pheno_data_control,
+            by = join_by(sample == geo_accession))
+```
+
+We want to get the mean gene expression for every unique Gene ID and control. For this we need to group the data by Gene ID and control.
+
+```{r}
+#Get list of distinct gene_ID
+Gene_ID_distinct <- merged_pheno_control |> 
+  distinct(Gene_ID)
+
+#Add control and gene_id as factors and groups
+merged_pheno_control <- merged_pheno_control |> 
+  mutate(control = factor(control, 
+                          levels = c(TRUE, FALSE)),
+         Gene_ID = factor(Gene_ID,
+                          Gene_ID_distinct$Gene_ID))  |> 
+  group_by(control,
+           Gene_ID)
+```
+
+We then make a new tibble with only the Gene ID, control and mean gene expression
+
+```{r}
+#Get the mean gene expression for each gene
+merged_mean <- merged_pheno_control |> 
+  summarize(mean = mean(expression))
+```
+
+We then want to get the difference between mean gene expression for if control is true or false
+
+```{r}
+#Pivot wide, turning control into two columns with values from mean
+merged_mean <- merged_mean |> 
+  pivot_wider(names_from = control,
+              values_from = mean)
+
+#Add column with difference in gene expression between control and non-control
+#For each gene
+merged_mean <- merged_mean |> 
+  mutate(diff = `FALSE`-`TRUE`)
+```
+
+Then we join merged_mean and merged_pheno_control
+
+```{r}
+merged_pheno_control <- merged_pheno_control |> 
+  left_join(y = merged_mean,
+            by = join_by(Gene_ID))
+
+merged_pheno_control <- merged_pheno_control |> 
+  ungroup()
+```
+
+Then we pivot merged_pheno_control long, so we have one column with if control is true or false and another with mean gene expression
+
+```{r}
+merged_pheno_control <- merged_pheno_control |> 
+  select(Gene_ID, 
+         `TRUE`, 
+         `FALSE`, 
+         diff)
+
+merged_pheno_control <- merged_pheno_control |> 
+  pivot_longer(col = c(`TRUE`, `FALSE`), 
+               names_to = "control", 
+               values_to = "mean_gene_expression")
+```
+
+We then remove repeated rows and save it
+
+```{r}
+merged_pheno_control <- merged_pheno_control |> 
+  distinct()
 
 
+write_tsv(x = merged_pheno_control, 
+          file = "../data/03_merged_shiny.tsv")
+
+```

@@ -13,16 +13,182 @@ execute:
 
 ```{r}
 library("tidyr")
+library("tidyverse")
+library("readr")
+library("dplyr")
+library("ggplot2")
+
 ```
 
 # Load Data
 
 ```{r}
-data_aug = read_tsv("/net/pupil1/home/people/s194685/projects/Exam_test/data/03_aug_data.tsv")
+# Load the merged, tidy data
+merged_final <- read_tsv("../data/03_merged_final.tsv")
+
+# Take a quick look at the structure
+glimpse(merged_final)
 ```
 
 # Analyse Data
 
 ```{r}
+merged_prepared <- merged_final |>
+  mutate(
+    disease_status = factor(`disease status`),
+    day = factor(day),
+    gender = factor(gender),
+    neutrophil_proportion = as.numeric(`neutrophil proportion`)
+  )
 
+# Filter to day 1 samples only
+merged_day1 <- merged_prepared |>
+  filter(day == "D1")
+
+# Check how many samples per disease group at day 1
+merged_day1 |>
+  count(disease_status)
 ```
+
+```{r fig.width=10, fig.height=7}
+merged_day1 |>
+  ggplot(aes(
+    x = disease_status,
+    y = expression,
+    fill = disease_status
+  )) +
+  geom_boxplot(outlier.size = 0.8, alpha = 0.8) +
+  facet_wrap(~ Gene_ID, scales = "free_y", nrow = 3) +
+  scale_fill_manual(
+    values = c(
+      "healthy" = "#4DAF4A",
+      "sepsis nonsurvivor" = "#E41A1C",
+      "sepsis survivor" = "#377EB8"
+    )
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Gene expression (Day 1) by disease status ",
+    x = "Disease status",
+    y = "Expression",
+    fill = "Disease status"
+  )
+```
+
+```{r}
+# Filter to only sepsis samples
+sepsis_day1 <- merged_prepared |>
+  filter(day == "D1" & disease_status != "healthy")
+
+# Check group counts
+sepsis_day1 |> count(disease_status)
+```
+
+```{r fig.width=10, fig.height=7}
+ggplot(sepsis_day1, aes(
+    x = disease_status,
+    y = expression,
+    fill = disease_status
+)) +
+  geom_boxplot(outlier.size = 0.8, alpha = 0.9) +
+  facet_wrap(~ Gene_ID, scales = "free_y", nrow = 3) +
+  scale_fill_manual(
+    values = c(
+      "sepsis nonsurvivor" = "#E41A1C",
+      "sepsis survivor" = "#377EB8"
+    )
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "bottom",
+    strip.text = element_text(size = 12)
+  ) +
+  labs(
+    title = "Gene expression on day 1 by survival status",
+    x = "Survival status",
+    y = "Expression",
+    fill = "Survival status"
+  )
+```
+
+```{r}
+survival_summary <- sepsis_day1 |>
+  group_by(Gene_ID, disease_status) |>
+  summarise(
+    mean = mean(expression),
+    sd = sd(expression),
+    n = n(),
+    .groups = "drop"
+  )
+
+survival_summary
+```
+
+```{r}
+library(broom)
+library(purrr)
+
+survival_tests <- sepsis_day1 |>
+  group_by(Gene_ID) |>
+  group_modify(~{
+    test <- t.test(expression ~ disease_status, data = .x)
+    tidy(test)
+  }) |>
+  ungroup()
+
+survival_tests
+```
+
+```{r}
+library(stringr)
+
+# pivot summary to wide form
+summary_wide <- survival_summary |>
+  select(Gene_ID, disease_status, mean) |>
+  mutate(
+    disease_status = str_replace_all(disease_status, " ", "_")
+  ) |>
+  pivot_wider(
+    names_from = disease_status,
+    values_from = mean,
+    names_prefix = "mean_"
+  )
+
+# join with t-test results
+survival_results <- survival_tests |>
+  left_join(summary_wide, by = "Gene_ID") |>
+  mutate(
+    diff_nonsurvivor_minus_survivor =
+      mean_sepsis_nonsurvivor - mean_sepsis_survivor,
+    p_adj = p.adjust(p.value, method = "BH")
+  ) |>
+  arrange(p_adj)
+
+survival_results
+```
+
+```{r}
+ggplot(survival_results, aes(
+    x = reorder(Gene_ID, diff_nonsurvivor_minus_survivor),
+    y = diff_nonsurvivor_minus_survivor,
+    fill = p_adj < 0.05
+)) +
+  geom_col() +
+  coord_flip() +
+  theme_bw() +
+  labs(
+    title = "Expression difference (nonsurvivor - survivor)",
+    x = "Gene",
+    y = "Mean difference",
+    fill = "Significant (FDR < 0.05)"
+  )
+```
+
+Interpretation:
