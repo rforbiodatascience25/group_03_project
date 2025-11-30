@@ -28,6 +28,7 @@ merged_final <- read_tsv("../data/03_merged_final.tsv")
 
 # Take a quick look at the structure
 glimpse(merged_final)
+show(merged_final)
 ```
 
 # Analyse Data
@@ -192,3 +193,227 @@ ggplot(survival_results, aes(
 ```
 
 Interpretation:
+
+THELMA'S part
+
+```{r}
+show(merged_final)
+```
+Understanding better the data 
+
+Relation between age, sex and disease status
+
+```{r}
+
+ggplot(merged_final, aes(x = gender, y = `age (years)`, fill = `disease status`)) +
+  geom_boxplot(alpha = 0.7) +
+  theme_bw() +
+  labs(
+    title = "Age distribution by sex and disease status",
+    x = "Sex", y = "Age", fill = "Disease Status"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+Most common site of infection 
+
+```{r}
+ggplot(merged_final, aes(x = fct_infreq(`site of infection`), fill = `disease status`)) +
+  geom_bar(position = "dodge") +
+  coord_flip() +
+  theme_bw() +
+  labs(
+    title = "Cases by infection site and disease status",
+    x = "Site of Infection",
+    y = "Number of cases",
+    fill = "Disease Status"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+```{r}
+ggplot(merged_final, aes(x = Gene_ID, y = expression, fill = Gene_ID)) +
+  geom_violin(trim = FALSE, alpha = 0.6) +
+  geom_boxplot(width = 0.1, outlier.size = 0.8, alpha = 0.8) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  labs(
+    title = "Gene expression distribution per gene",
+    y = "Expression level",
+    x = "Gene ID"
+  )
+```
+Expression per gene across disease status
+```{r}
+
+library(forcats)
+
+ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease status`)) +
+  geom_violin(alpha = 0.6) +
+  geom_boxplot(width = 0.15, outlier.size = 0.5, alpha = 0.8) +
+  facet_wrap(~ Gene_ID, scales = "free_y") +
+  theme_bw() +
+  labs(title = "Expression per gene across disease status",
+       x = "Disease status", y = "Expression") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+Calculating difference of mean in gene expression - sepsis nonsurvivor vs healthy
+positive = overexpressed ()
+negative = underexpressed
+```{r}
+# calculating mean by gene and disease condition
+expr_diff <- merged_final %>%
+  group_by(Gene_ID, `disease status`) %>%
+  summarise(mean_expr = mean(expression, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = `disease status`, values_from = mean_expr) %>%
+# Dealing with NA
+  mutate(
+    diff_NS_vs_H = `sepsis nonsurvivor` - healthy,
+    direction = case_when(
+      is.na(diff_NS_vs_H) ~ "no_data",
+      diff_NS_vs_H > 0 ~ "overexpressed",
+      diff_NS_vs_H < 0 ~ "underexpressed",
+      TRUE ~ "no_change"
+    )
+  ) %>%
+  arrange(desc(diff_NS_vs_H))
+
+# plot
+ggplot(expr_diff, aes(x = fct_reorder(Gene_ID, diff_NS_vs_H), y = diff_NS_vs_H, fill = direction)) +
+  geom_col() +
+  scale_fill_manual(values = c(
+    "overexpressed" = "#D55E00",  
+    "underexpressed" = "#0072B2", 
+    "no_change" = "grey80",
+    "no_data" = "grey95"
+  )) +
+  coord_flip() +
+  theme_bw() +
+  labs(
+    title = "Difference in expression (Nonsurvivor - Healthy)",
+    x = "Gene",
+    y = "Expression difference (NS - Healthy)",
+    fill = "Direction"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+Volcano plot
+```{r}
+library(ggrepel)
+
+groupA <- "healthy"
+groupB <- "sepsis nonsurvivor"
+pseudocount <- 1e-6
+alpha <- 0.05
+
+# Data prep
+volcano_simple <- merged_final %>%
+  filter(`disease status` %in% c(groupA, groupB)) %>%
+  group_by(Gene_ID) %>%
+  summarise(
+    mean_A = mean(expression[`disease status` == groupA], na.rm = TRUE),
+    mean_B = mean(expression[`disease status` == groupB], na.rm = TRUE),
+
+    # fold-change
+    log2FC = log2((mean_B + pseudocount) / (mean_A + pseudocount)),
+
+    # p-value
+    p.value = {
+      x <- expression[`disease status` == groupA]
+      y <- expression[`disease status` == groupB]
+      if (sum(!is.na(x)) >= 2 && sum(!is.na(y)) >= 2) {
+        tryCatch(t.test(y, x)$p.value, error = function(e) NA_real_)
+      } else {
+        NA_real_
+      }
+    },
+    .groups = "drop"
+  ) %>%
+  mutate(
+    padj = p.adjust(p.value, method = "fdr"),
+    sig = case_when(
+      is.na(padj) ~ "no_data",
+      padj < alpha & log2FC > 0 ~ "overexpressed",
+      padj < alpha & log2FC < 0 ~ "underexpressed",
+      TRUE ~ "not_significant"
+    )
+  )
+
+# Volcano Plot
+ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj))) +
+  geom_point(aes(color = sig), alpha = 0.7, size = 2) +
+  scale_color_manual(values = c(
+    "overexpressed" = "#D55E00",
+    "underexpressed" = "#0072B2",
+    "not_significant" = "grey70",
+    "no_data" = "grey95"
+  )) +
+  geom_text_repel(
+    data = volcano_simple %>% filter(sig %in% c("overexpressed", "underexpressed")),
+    aes(label = Gene_ID),
+    size = 3,
+    max.overlaps = 20
+  ) +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "darkgrey") +
+  geom_hline(yintercept = -log10(alpha), linetype = "dashed", color = "darkgrey") +
+  theme_bw() +
+  labs(
+    title = paste(groupB, "vs", groupA),
+    x = "log2 Fold Change (B / A)",
+    y = "-log10(FDR p-value)",
+    color = "Significance"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+
+Analyzing the gene expression during the 5 days and its relation with the disease status 
+```{r}
+ggplot(merged_final, aes(x = day, y = expression, color = `disease status`)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~ Gene_ID, scales = "free_y") +
+  theme_bw()
+
+```
+
+
+
+Gene expression vs neutrophil proportion
+
+Only with genes showing more variance in expression - is there any co-relation? 
+```{r}
+
+# Choosing genes with more variance in expression 
+top_genes <- merged_final %>%
+  group_by(Gene_ID) %>%
+  summarise(var_expr = var(expression, na.rm = TRUE)) %>%
+  arrange(desc(var_expr)) %>%
+  slice_head(n = 12) %>%
+  pull(Gene_ID)
+
+df_facet <- merged_final %>% filter(Gene_ID %in% top_genes)
+
+ggplot(df_facet, aes(x = `neutrophil proportion`, y = expression)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed") +
+  facet_wrap(~ Gene_ID, scales = "free_y") +
+  theme_bw() +
+  labs(title = "Expression vs neutrophils — selected genes",
+       x = "Neutrophil proportion", y = "Expression") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
