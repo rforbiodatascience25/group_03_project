@@ -155,6 +155,7 @@ Now that the metadata has been cleaned, the next step is to add the gene express
 # Clean Platform table
 
 ```{r}
+platform_table = read_tsv('../data/platform_table.tsv')
 platform_table = read_tsv('~/data/platform_table.tsv')
 
 #Convert platform table into a tibble
@@ -169,5 +170,6 @@ platform_table_clean <- platform_table_clean |>
   rename("ILMN_Gene" = ID)
 
 write_tsv(x = platform_table_clean, 
+          file = "../data/02_platform_table_clean.tsv")
           file = "~/data/02_platform_table_clean.tsv")
 ```
