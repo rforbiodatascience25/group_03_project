@@ -335,7 +335,7 @@ volcano_simple <- merged_final %>%
         tryCatch(t.test(y, x)$p.value, error = function(e) NA_real_)
       } else {
         NA_real_
-      }
+      } 
     },
     .groups = "drop"
   ) %>%
