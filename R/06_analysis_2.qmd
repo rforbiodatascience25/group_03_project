@@ -18,7 +18,6 @@ library(shiny)
 library(bslib)
 library(tidyverse)
 library(GEOquery)
-library(rsconnect)
 ```
 
 # Load Data
@@ -82,28 +81,31 @@ ui <- page_sidebar(
 ```{r}
 
 server <- function(input, output) {
+  
+  merged_shiny_reactive = reactive({
+    gene_category(merged_shiny,input$geneCat, input$genes)
+    
+  })
   output$genePlot <- renderPlot({
     
-    merged_shiny = gene_category(merged_shiny,input$geneCat, input$genes)
-    
-    ggplot(merged_shiny) + 
+    ggplot(merged_shiny_reactive()) + 
       geom_boxplot(mapping = aes(x = Gene_ID,
                                  y = mean_gene_expression,
                                  color = diff)) +
       scale_color_gradient2(low = "red",
                             mid = "white",
                             high = "blue",
-                            midpoint = 0) +
-      theme(axis.text.x=element_blank())
+                            midpoint = 0)
   })
   output$geneTable = renderTable({
-    gene_category(merged_shiny,input$geneCat, input$genes)
+    gene_category(merged_shiny_reactive(),input$geneCat, input$genes)
     
   })
   output$descriptiveText <- renderText({
     "The more visible the boxplot is, the higher the difference. Blue means an positive difference, so there is a higher gene expression in non-control patients. Red means an negative difference, so there is a lower gene expression in non-control patients."
   })
 }
+
 
 ```
 
