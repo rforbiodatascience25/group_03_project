@@ -193,8 +193,10 @@ Detect which rows has the word 'Control' in the title column. If they do, for th
 
 ```{r}
 pheno_data_control <- pheno_data |> 
-  mutate(control = str_detect(title, '(Control)'))  |> 
-  mutate(control = factor(control, levels = c(TRUE, FALSE)))  |> 
+  mutate(control = str_detect(title, 
+                              '(Control)'))  |> 
+  mutate(control = factor(control, 
+                          levels = c(TRUE, FALSE)))  |> 
   group_by(control)
 ```
 
@@ -297,6 +299,6 @@ merged_pheno_control <- merged_pheno_control |>
 
 
 write_tsv(x = merged_pheno_control, 
-          file = "../data/merged_shiny.tsv")
+          file = "../data/03_merged_shiny.tsv")
 
 ```

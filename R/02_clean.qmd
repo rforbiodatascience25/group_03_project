@@ -162,9 +162,12 @@ platform_table_clean <- tibble(ID = platform_table$ID,
                                ILMN_Gene = platform_table$ILMN_Gene)
 
 #Change the column names
-platform_table_clean <- platform_table_clean |> rename('Gene_ID' = ILMN_Gene)
-platform_table_clean <- platform_table_clean |> rename('ILMN_Gene' = ID)
+platform_table_clean <- platform_table_clean |> 
+  rename("Gene_ID" = ILMN_Gene)
+
+platform_table_clean <- platform_table_clean |> 
+  rename("ILMN_Gene" = ID)
 
 write_tsv(x = platform_table_clean, 
-          file = '~/data/02_platform_table_clean.tsv')
+          file = "~/data/02_platform_table_clean.tsv")
 ```
