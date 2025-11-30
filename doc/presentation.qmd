@@ -313,6 +313,16 @@ reactable(merged_shiny,
           )
 ```
 
+## TEST
+
+```{mermaid}
+flowchart LR
+  A[Hard edge] --> B(Round edge)
+  B --> C{Decision}
+  C --> D[Result one]
+  C --> E[Result two]
+```
+
 ## Results
 
 Slide 7

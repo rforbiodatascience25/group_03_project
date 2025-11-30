@@ -60,7 +60,8 @@ ui <- page_sidebar(
     radioButtons(
       "plotOrtable",
       "Do you want to show?",
-      choices = list("Plot", "Table"),
+      choices = list("Plot", 
+                     "Table"),
       selected = "Plot"
     )
   ),
@@ -83,22 +84,29 @@ ui <- page_sidebar(
 server <- function(input, output) {
   
   merged_shiny_reactive = reactive({
-    gene_category(merged_shiny,input$geneCat, input$genes)
-    
+    gene_category(merged_shiny,
+                  input$geneCat, 
+                  input$genes)
   })
+  
   output$genePlot <- renderPlot({
     
     ggplot(merged_shiny_reactive()) + 
-      geom_boxplot(mapping = aes(x = Gene_ID,
-                                 y = mean_gene_expression,
-                                 color = diff)) +
+      geom_boxplot(mapping = aes(x = mean_gene_expression,
+                                 y = Gene_ID,
+                                 color = difference_mean_gene_expression)) +
       scale_color_gradient2(low = "red",
                             mid = "white",
                             high = "blue",
-                            midpoint = 0)
+                            midpoint = 0,
+                            name = 'diff') +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    
   })
   output$geneTable = renderTable({
-    gene_category(merged_shiny_reactive(),input$geneCat, input$genes)
+    gene_category(merged_shiny_reactive(),
+                  input$geneCat, 
+                  input$genes)
     
   })
   output$descriptiveText <- renderText({
@@ -112,5 +120,6 @@ server <- function(input, output) {
 # Running the App
 
 ```{r}
-shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, 
+         server = server)
 ```

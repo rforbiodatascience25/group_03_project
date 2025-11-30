@@ -2,9 +2,9 @@
 
 #Import function gene_category
 gene_category <- function(df, category, genes) {
-  #df = a dataframe with a "Gene_ID" column and a 'diff' column
+  #df = a dataframe with a "Gene_ID" column and a 'difference_mean_gene_expression' column
   ##Gene_ID = a string unique for each row
-  ##diff = a float
+  ##difference_mean_gene_expression = a float
   #category = one of the four categories, 'random', 'max', 'min' or 'maxmin'
   #genes = a int
   
@@ -18,56 +18,59 @@ gene_category <- function(df, category, genes) {
     
     df <- df |> 
       filter(Gene_ID %in% Gene_ID_slice) |> 
-      arrange(desc(diff))
+      arrange(desc(difference_mean_gene_expression))
     
     return (df)
   }
   
-  #return df with the unique Gene_ID, equal to genes, with the maximum diff
+  #return df with the unique Gene_ID, equal to genes, 
+  #with the maximum difference in mean gene expression
   else if (category == "max"){
     Gene_slice <- df |> 
-      slice_max(diff, 
+      slice_max(difference_mean_gene_expression, 
                 n = genes*2)
     
     Gene_ID_slice <- Gene_slice$Gene_ID
     
     df <- df |>
       filter(Gene_ID %in% Gene_ID_slice) |> 
-      arrange(desc(diff))
+      arrange(desc(difference_mean_gene_expression))
     
     return (df)
   }
   
-  #return df with the unique Gene_ID, equal to genes, with the minimum diff
+  #return df with the unique Gene_ID, equal to genes, 
+  #with the minimum difference in mean gene expression
   else if (category == "min"){
     Gene_slice <- df |> 
-      slice_min(diff,
+      slice_min(difference_mean_gene_expression,
                 n = genes*2)
     
     Gene_ID_slice <- Gene_slice$Gene_ID
     
     df <- df |>
       filter(Gene_ID %in% Gene_ID_slice) |> 
-      arrange(desc(diff))
+      arrange(desc(difference_mean_gene_expression))
     
     return (df)
     
   }
   
-  #return df with the unique Gene_ID, equal to genes, with almost no diff
+  #return df with the unique Gene_ID, equal to genes, 
+  #with almost no difference in mean gene expression
   else if (category == "mid"){
     df_mid <- df |>
-      mutate(diff = abs(diff))
+      mutate(difference_mean_gene_expression = abs(difference_mean_gene_expression))
     
     Gene_slice <- df_mid |> 
-      slice_min(diff,
+      slice_min(difference_mean_gene_expression,
                 n = genes*2)
     
     Gene_ID_slice <- Gene_slice$Gene_ID
     
     df <- df |>
       filter(Gene_ID %in% Gene_ID_slice) |> 
-      arrange(desc(diff))
+      arrange(desc(difference_mean_gene_expression))
     
     return (df)
   }
