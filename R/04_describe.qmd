@@ -93,8 +93,9 @@ expr_summary <- merged_final %>%
 ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
   geom_col(fill = "steelblue") +
   scale_y_continuous(expand = c(0, 0))  +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title  = element_text(hjust = 0.5)) +
   labs(
     title = "Mean Expression per Gene",
     x = "Gene",
@@ -117,9 +118,10 @@ neut_summary <- merged_final %>%
   )
 #visualization
 ggplot(merged_final, aes(x = Gene_ID, y = `neutrophil proportion`)) +
-  geom_boxplot(fill = "steelblue") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_boxplot(fill = "orange") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title  = element_text(hjust = 0.5)) +
   labs(title = "Neutrophil proportion distribution per gene", x = "Gene", y = "Proportion")
 
 ```
