@@ -93,7 +93,7 @@ expr_summary <- merged_final %>%
   )
 
 #plot 
-ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
+expr_summary_plot <- ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
   geom_col(fill = "steelblue") +
   scale_y_continuous(expand = c(0, 0))  +
   theme_classic() +
@@ -104,6 +104,15 @@ ggplot(expr_summary, aes(x = Gene_ID, y = mean)) +
     x = "Gene",
     y = "Mean Expression"
   )
+
+#save plot
+ggsave(
+  filename = "../results/04_mean_gene_expression.png",
+  plot = expr_summary_plot,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
 ```
 
 Statistics for neutrophil proportion
