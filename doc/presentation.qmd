@@ -313,16 +313,6 @@ reactable(merged_shiny,
           )
 ```
 
-## TEST
-
-```{mermaid}
-flowchart LR
-  A[Hard edge] --> B(Round edge)
-  B --> C{Decision}
-  C --> D[Result one]
-  C --> E[Result two]
-```
-
 ## Results
 
 Slide 7
@@ -333,6 +323,7 @@ Slide 7
 library(ggplot2)
 library(forcats)
 
+ merged_final <- read_tsv("../data/03_merged_final.tsv")
 
 ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease status`)) +
   geom_violin(alpha = 0.6, trim = TRUE) +
