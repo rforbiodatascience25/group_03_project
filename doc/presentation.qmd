@@ -1,5 +1,5 @@
 ---
-title: "Final project"
+title: "Final Project"
 format:
   revealjs: 
     theme: sky
@@ -300,7 +300,7 @@ Phenotype data: sample, control
 Expression data: sample, expression
 :::
 
-## Results
+## Results and Discussion
 
 ```{r}
 merged_shiny = read_tsv("../data/03_merged_shiny.tsv")
@@ -314,18 +314,19 @@ reactable(merged_shiny,
           )
 ```
 
-## Results
+## Results and Discussion
 
 Boxplots for expression per gene in survivors vs non-survivors
 
 ![](../results/05_survival_boxplots_day1.png){fig-align="center" width="2571"}
 
-## Results
+## Results and Discussion
 
 Difference in day 1 gene expression in survivors vs non-survivors
 
 ![](../results/05_expression_difference_day1.png){fig-align="center"}
 
+<<<<<<< HEAD
 ## Results
 Expression per gene across disease status.
 
@@ -343,6 +344,9 @@ Volcano plot
 - Overall, the pattern points to early immune and signaling disturbances specifically associated with poor outcomes.
 
 ![](../results/05_volcano_plot_sepsis_vs_healthy.png){fig-align="center"}
+=======
+## Results and Discussion
+>>>>>>> 3aefb37c9d15df727b9be7f0b7f4237c97500d76
 
 ```{r expression_by_gene, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8}
 library(ggplot2)
@@ -364,5 +368,5 @@ ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease s
   )
 ```
 
-## Results
+## Results and Discussion
 
