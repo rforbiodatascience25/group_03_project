@@ -15,7 +15,7 @@ Our project is based on dataset GEOquery **\[GSE54514\]**
 
 And **this** paper
 
-![](images/clipboard-3827441283.png)
+![](paper.png)
 
 ## Materials and Methods
 
