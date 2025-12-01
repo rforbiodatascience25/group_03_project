@@ -155,7 +155,7 @@ Now that the metadata has been cleaned, the next step is to add the gene express
 # Clean Platform table
 
 ```{r}
-platform_table = read_tsv('../data/platform_table.tsv')
+platform_table = read_tsv('../data/01_platform_table.tsv')
 
 #Convert platform table into a tibble
 platform_table_clean <- tibble(ID = platform_table$ID,

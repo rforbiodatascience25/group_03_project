@@ -37,7 +37,7 @@ Before we had a metadata table, now we will add 15 new genes based on the paper 
 ### First, we load the gene expression matrix
 
 ```{r}
-gene_expression <- read_tsv("../data/expression_data.tsv")
+gene_expression <- read_tsv("../data/01_expression_data.tsv")
 head(gene_expression)
 ```
 
@@ -186,7 +186,7 @@ write_tsv(x = merged_final_unfiltered,
 Read phenotype data
 
 ```{r}
-pheno_data <- read_tsv("../data/phenotype_data.tsv")
+pheno_data <- read_tsv("../data/01_phenotype_data.tsv")
 ```
 
 Detect which rows has the word 'Control' in the title column. If they do, for the new column 'control', equal TRUE, if not, equal FALSE.
