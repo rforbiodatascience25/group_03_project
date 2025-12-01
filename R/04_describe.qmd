@@ -12,8 +12,7 @@ execute:
 # Load Libraries
 
 ```{r}
-#install.packages("readr")     
-library("tidyr")
+library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(readr)
@@ -32,7 +31,7 @@ show(merged_final)
 
 # Describe Data
 
-#Understanding the data structure
+### Understanding the data structure
 
 ```{r}
 str(merged_final)
@@ -40,7 +39,7 @@ summary(merged_final)
 glimpse(merged_final)
 ```
 
-#Basic data statistics
+### Basic data statistics
 
 ```{r}
 #counting unique genes
@@ -69,6 +68,7 @@ cat("Oldest age:", oldest, "\n")
 ```
 
 Summary statistics for expression.
+
 This shows the overall gene expression
 
 ```{r}
@@ -78,6 +78,9 @@ summary(merged_final$expression)
 Statistics for each gene
 
 ```{r}
+#So we can visualize plots
+options(bitmapType = "cairo")
+
 expr_summary <- merged_final %>% 
   group_by(Gene_ID) %>% 
   summarise(
@@ -125,6 +128,3 @@ ggplot(merged_final, aes(x = Gene_ID, y = `neutrophil proportion`)) +
   labs(title = "Neutrophil proportion distribution per gene", x = "Gene", y = "Proportion")
 
 ```
-
-
-

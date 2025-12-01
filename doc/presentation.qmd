@@ -66,7 +66,7 @@ But a tidy data set should follow these rules:
 
 ```{r}
 gene_expression <- read_tsv("../data/expression_data.tsv")
-gene_names <- read_tsv("../data/platform_table_clean.tsv")
+gene_names <- read_tsv("../data/02_platform_table_clean.tsv")
 
 #Rename so both have the same ILMN_ID
 expression_data <- gene_expression |>
