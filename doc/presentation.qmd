@@ -3,8 +3,9 @@ title: "Final project"
 format:
   revealjs: 
     theme: sky
+    lazy-load: false
+editor: visual  
 slide-number: true
-editor: visual
 author: Mei Lin Verghese Law Kung Sam(s194685), Thelma Urena(s242552), Alejandra Caballero(s231912),Marco Bonafede(s243247), Carlos Sainz(s253695)
 ---
 
@@ -315,7 +316,15 @@ reactable(merged_shiny,
 
 ## Results
 
-Slide 7
+Slide 7 \## Results – Boxplots for expression per gene in survivors vs non-survivors
+
+![](survival_boxplots_day1.png){fig-align="center"}
+
+Slide 8 \## Results – Difference in day 1 gene expression in survivors vs non-survivors
+
+![](expression_difference_day1.png){fig-align="center"}
+
+Slide 9
 
 ## Results – Expression per gene across disease status
 
@@ -341,7 +350,7 @@ ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease s
 
 ## Results
 
-Slide 8
+Slide 10
 
 ```{r}
 library(dplyr)
