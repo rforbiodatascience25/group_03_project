@@ -318,15 +318,15 @@ reactable(merged_shiny,
 
 Boxplots for expression per gene in survivors vs non-survivors
 
-![](survival_boxplots_day1.png){fig-align="center" width="2571"}
+![](../results/05_survival_boxplots_day1.png){fig-align="center" width="2571"}
 
 ## Results
 
 Difference in day 1 gene expression in survivors vs non-survivors
 
-![](expression_difference_day1.png){fig-align="center"}
+![](../results/05_expression_difference_day1.png){fig-align="center"}
 
-## Results – Expression per gene across disease status
+## Results
 
 ```{r expression_by_gene, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8}
 library(ggplot2)
@@ -416,5 +416,3 @@ color = "Significance"
 theme(plot.title = element_text(hjust = 0.5))
 
 ```
-
-## 
