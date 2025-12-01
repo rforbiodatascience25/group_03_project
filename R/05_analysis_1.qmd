@@ -292,7 +292,12 @@ ggplot(merged_final, aes(x = Gene_ID, y = expression, fill = Gene_ID)) +
   )
 ```
 
-Expression per gene across disease status
+Expression per gene across disease status.
+
+Discussion: 
+- Clear expression differences across healthy, survivors, and nonsurvivors.
+- Innate immune genes (e.g., IRAK4, SOCS1) show higher expression in sepsis groups.
+- T-cell–related genes (CD2, CD3E, CD8A) are lower in nonsurvivors, suggesting early immune suppression.
 
 ```{r}
 
@@ -368,6 +373,12 @@ ggplot(expr_diff, aes(x = fct_reorder(Gene_ID, diff_NS_vs_H), y = diff_NS_vs_H, 
 Volcano plot
 
 The volcano plot shows which genes are expressed differently between the sepsis nonsurvivor and healthy groups. The x-axis indicates how much a gene increases or decreases in expression (log₂ fold change), and the y-axis shows how statistically significant this difference is (−log₁₀ of the FDR-adjusted p-value). Genes that show both a strong change in expression and a significant p-value (FDR < 0.05) are highlighted as overexpressed or underexpressed. The vertical dashed lines mark a two-fold change in expression, and the horizontal dashed line marks the significance cutoff. Genes that appear high and far to the left or right are the most strongly and significantly different between the two groups.
+
+Discussion: 
+- A small set of genes shows significant differences between nonsurvivors and healthy individuals.
+- SOCS1 and ELK1 are upregulated, indicating early activation of inflammatory and transcriptional regulatory pathways.
+- WIPF1 and MAPK1 are downregulated, suggesting reduced signaling activity linked to cytoskeletal regulation and MAPK pathways.
+- Overall, the pattern points to early immune and signaling disturbances specifically associated with poor outcomes.
 
 ```{r}
 groupA <- "healthy"
