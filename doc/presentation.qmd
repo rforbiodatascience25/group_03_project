@@ -302,7 +302,7 @@ Expression data: sample, expression
 ## Results
 
 ```{r}
-merged_shiny = read_tsv("../data/merged_shiny.tsv")
+merged_shiny = read_tsv("../data/03_merged_shiny.tsv")
 
 reactable(merged_shiny,
           sortable = TRUE,
@@ -418,7 +418,6 @@ color = "Significance"
 theme(plot.title = element_text(hjust = 0.5))
 
 ```
-
 
 ## Discussion
 
