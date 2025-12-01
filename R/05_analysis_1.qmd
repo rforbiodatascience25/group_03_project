@@ -131,7 +131,7 @@ survival_boxplots <- ggplot(sepsis_day1, aes(
   )
 
 ggsave(
-  filename = "~/projects/R_project/results/survival_boxplots_day1.png",
+  filename = "~/projects/R_project/doc/survival_boxplots_day1.png",
   plot = survival_boxplots,
   width = 10,
   height = 7,
@@ -225,7 +225,7 @@ expression_diff_plot <- ggplot(survival_results, aes(
   )
 
 ggsave(
-  filename = "~/projects/R_project/results/expression_difference_day1.png",
+  filename = "~/projects/R_project/doc/expression_difference_day1.png",
   plot = expression_diff_plot,
   width = 10,
   height = 7,
