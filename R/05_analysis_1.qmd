@@ -55,7 +55,6 @@ merged_day1 |>
   count(disease_status)
 ```
 
-<<<<<<< HEAD
 # Boxplots of gene expression by disease status on day 1 for every gene
 ```{r fig.width=10, fig.height=7}
 #So we can visualize plots
@@ -100,7 +99,6 @@ sepsis_day1 <- merged_prepared |>
 sepsis_day1 |> count(disease_status)
 ```
 
-<<<<<<< HEAD
 # Same plot (gene expression by disease status) but for survivors vs non survivors
 ```{r fig.width=10, fig.height=7}
 survival_boxplots <- ggplot(sepsis_day1, aes(
@@ -225,7 +223,7 @@ expression_diff_plot <- ggplot(survival_results, aes(
   )
 
 ggsave(
-  filename = "~/projects/R_project/doc/expression_difference_day1.png",
+  filename = "../doc/05_expression_difference_day1.png",
   plot = expression_diff_plot,
   width = 10,
   height = 7,
