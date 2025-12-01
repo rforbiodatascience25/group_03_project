@@ -66,7 +66,7 @@ But a tidy data set should follow these rules:
 
 ```{r}
 gene_expression <- read_tsv("../data/expression_data.tsv")
-gene_names <- read_tsv("../data/platform_table_clean.tsv")
+gene_names <- read_tsv("../data/02_platform_table_clean.tsv")
 
 #Rename so both have the same ILMN_ID
 expression_data <- gene_expression |>
@@ -302,7 +302,7 @@ Expression data: sample, expression
 ## Results
 
 ```{r}
-merged_shiny = read_tsv("../data/merged_shiny.tsv")
+merged_shiny = read_tsv("../data/03_merged_shiny.tsv")
 
 reactable(merged_shiny,
           sortable = TRUE,
@@ -311,16 +311,6 @@ reactable(merged_shiny,
           theme = reactableTheme(style = list(fontSize = "20px")
                                  )
           )
-```
-
-## TEST
-
-```{mermaid}
-flowchart LR
-  A[Hard edge] --> B(Round edge)
-  B --> C{Decision}
-  C --> D[Result one]
-  C --> E[Result two]
 ```
 
 ## Results
@@ -333,6 +323,7 @@ Slide 7
 library(ggplot2)
 library(forcats)
 
+ merged_final <- read_tsv("../data/03_merged_final.tsv")
 
 ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease status`)) +
   geom_violin(alpha = 0.6, trim = TRUE) +
@@ -419,11 +410,6 @@ theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
-
 ## Discussion
 
 Slide 9
-
-## Discussion
-
-Slide 10

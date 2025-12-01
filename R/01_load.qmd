@@ -50,14 +50,7 @@ df_ed$gene_ID <- rownames(df_ed)
 df_ed <- df_ed[, c("gene_ID", colnames(df_ed)[colnames(df_ed) != "gene_ID"])]
 
 #Save expression data as tsv
-#write_tsv(x = df_ed, 
-         #file = file.path(directory,'data/expression_data.tsv'))
-
-# Asegúrate de que tu línea de escritura de archivo se vea exactamente así:
-#write_tsv(x = df_ed,
-       #   file = "data/expression_data.tsv")
-write_tsv(df_ed, "~/expression_data.tsv")
-
+write_tsv(df_ed, "../data/expression_data.tsv")
 ```
 
 ### Loading and saving phenotype data
@@ -115,5 +108,5 @@ platform_table <- platform_raw@dataTable@table
 
 #Write Platform
 write_tsv(x = platform_table, 
-          file = '~/data/platform_table.tsv')
+          file = '../data/platform_table.tsv')
 ```

@@ -12,16 +12,16 @@ execute:
 # Load Libraries
 
 ```{r}
-library("tidyr")
-library("tidyverse")
-library("readr")
-library("dplyr")
-library("ggplot2")
-library(stringr)
+library(tidyr)
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
 library(broom)
-library(purrr) 
-
-
+library(purrr)
+library(stringr)
+library(forcats)
+library(ggrepel)
 ```
 
 # Load Data
@@ -55,8 +55,12 @@ merged_day1 |>
   count(disease_status)
 ```
 
+<<<<<<< HEAD
 # Boxplots of gene expression by disease status on day 1 for every gene
 ```{r fig.width=10, fig.height=7}
+#So we can visualize plots
+options(bitmapType = "cairo")
+
 merged_day1 |>
   ggplot(aes(
     x = disease_status,
@@ -96,6 +100,7 @@ sepsis_day1 <- merged_prepared |>
 sepsis_day1 |> count(disease_status)
 ```
 
+<<<<<<< HEAD
 # Same plot (gene expression by disease status) but for survivors vs non survivors
 ```{r fig.width=10, fig.height=7}
 survival_boxplots <- ggplot(sepsis_day1, aes(
@@ -172,10 +177,12 @@ survival_tests_renamed <- survival_tests |>
 survival_tests_renamed
 ```
 
+<<<<<<< HEAD
 # Combining summary statistics with t test results for each gene 
 
 ```{r}
 #pivot summary to wide form
+
 summary_wide <- survival_summary |>
   select(Gene_ID, disease_status, mean) |>
   mutate(
@@ -236,7 +243,8 @@ THELMA'S part
 ```{r}
 show(merged_final)
 ```
-Understanding better the data 
+
+Understanding better the data
 
 Relation between age, sex and disease status
 
@@ -252,7 +260,8 @@ ggplot(merged_final, aes(x = gender, y = `age (years)`, fill = `disease status`)
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
-Most common site of infection 
+
+Most common site of infection
 
 ```{r}
 ggplot(merged_final, aes(x = fct_infreq(`site of infection`), fill = `disease status`)) +
@@ -286,10 +295,10 @@ ggplot(merged_final, aes(x = Gene_ID, y = expression, fill = Gene_ID)) +
     x = "Gene ID"
   )
 ```
-Expression per gene across disease status
-```{r}
 
-library(forcats)
+Expression per gene across disease status
+
+```{r}
 
 ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease status`)) +
   geom_violin(alpha = 0.6) +
@@ -303,9 +312,8 @@ ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease s
 
 ```
 
-Calculating difference of mean in gene expression - sepsis nonsurvivor vs healthy
-positive = overexpressed ()
-negative = underexpressed
+Calculating difference of mean in gene expression - sepsis nonsurvivor vs healthy positive = overexpressed () negative = underexpressed
+
 ```{r}
 # calculating mean by gene and disease condition
 expr_diff <- merged_final %>%
@@ -344,10 +352,10 @@ ggplot(expr_diff, aes(x = fct_reorder(Gene_ID, diff_NS_vs_H), y = diff_NS_vs_H, 
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
-Volcano plot
-```{r}
-library(ggrepel)
 
+Volcano plot
+
+```{r}
 groupA <- "healthy"
 groupB <- "sepsis nonsurvivor"
 pseudocount <- 1e-6
@@ -415,8 +423,8 @@ ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj))) +
 
 ```
 
+Analyzing the gene expression during the 5 days and its relation with the disease status
 
-Analyzing the gene expression during the 5 days and its relation with the disease status 
 ```{r}
 ggplot(merged_final, aes(x = day, y = expression, color = `disease status`)) +
   geom_point(alpha = 0.6) +
@@ -426,11 +434,10 @@ ggplot(merged_final, aes(x = day, y = expression, color = `disease status`)) +
 
 ```
 
-
-
 Gene expression vs neutrophil proportion
 
-Only with genes showing more variance in expression - is there any co-relation? 
+Only with genes showing more variance in expression - is there any co-relation?
+
 ```{r}
 
 # Choosing genes with more variance in expression 
@@ -453,4 +460,3 @@ ggplot(df_facet, aes(x = `neutrophil proportion`, y = expression)) +
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
-
