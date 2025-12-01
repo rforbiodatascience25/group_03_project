@@ -50,8 +50,7 @@ Oh no! we find out that we don't have the real gene name, but the illumina gene 
 So we can find the real gene name based on the ILMN gene name
 
 ```{r}
-setwd("..")
-gene_names <- read_tsv("data/platform_table_clean.tsv")
+gene_names <- read_tsv("../data/02_platform_table_clean.tsv")
 show(gene_names)
 ```
 
@@ -149,6 +148,7 @@ merged_final <- second_clean |>
 show(merged_final)
 summary(merged_final)
 
+#And save file
 write_tsv(x = merged_final,
           file = file.path("../data/03_merged_final.tsv"))
 ```
