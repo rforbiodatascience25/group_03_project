@@ -327,7 +327,7 @@ Difference in day 1 gene expression in survivors vs non-survivors
 ![](../results/05_expression_difference_day1.png){fig-align="center"}
 
 <<<<<<< HEAD
-## Results
+## Results 
 Expression per gene across disease status.
 
 - Clear expression differences across healthy, survivors, and nonsurvivors.
@@ -335,6 +335,7 @@ Expression per gene across disease status.
 - T-cell–related genes (CD2, CD3E, CD8A) are lower in nonsurvivors, suggesting early immune suppression.
 
 ![](../results/05_expression_violinplot.png){fig-align="center"}
+
 ## Results
 Volcano plot
 
