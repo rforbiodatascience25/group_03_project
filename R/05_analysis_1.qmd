@@ -361,7 +361,7 @@ groupB <- "sepsis nonsurvivor"
 pseudocount <- 1e-6
 alpha <- 0.05
 
-# Data prep
+# Data prep (igual que tu código)
 volcano_simple <- merged_final %>%
   filter(`disease status` %in% c(groupA, groupB)) %>%
   group_by(Gene_ID) %>%
@@ -394,8 +394,7 @@ volcano_simple <- merged_final %>%
     )
   )
 
-# Volcano Plot
-ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj))) +
+volcano_plot <- ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj))) +
   geom_point(aes(color = sig), alpha = 0.7, size = 2) +
   scale_color_manual(values = c(
     "overexpressed" = "#D55E00",
@@ -420,8 +419,18 @@ ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj))) +
   ) +
   theme(plot.title = element_text(hjust = 0.5))
 
+print(volcano_plot)
+
+ggsave(
+  filename = "../results/05_volcano_plot_sepsis_vs_healthy.png",
+  plot = volcano_plot,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
 
 ```
+
 
 Analyzing the gene expression during the 5 days and its relation with the disease status
 
