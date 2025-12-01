@@ -67,7 +67,7 @@ But a tidy data set should follow these rules:
 ## Materials and Methods
 
 ```{r}
-gene_expression <- read_tsv("../data/expression_data.tsv")
+gene_expression <- read_tsv("../data/01_expression_data.tsv")
 gene_names <- read_tsv("../data/02_platform_table_clean.tsv")
 
 #Rename so both have the same ILMN_ID
@@ -237,7 +237,7 @@ reactable(meta_clean,
 ## Materials and Methods
 
 ```{r}
-pheno_data <- read_tsv("../data/phenotype_data.tsv")
+pheno_data <- read_tsv("../data/01_phenotype_data.tsv")
 
 pheno_data_control <- pheno_data |> 
   mutate(control = str_detect(title, '(Control)'))  |> 
@@ -381,7 +381,6 @@ NA_real_
 ) %>%
 mutate(
 padj = p.adjust(p.value, method = "fdr"),
-# protegemos contra padj = 0 al graficar -log10
 padj_plot = pmax(padj, 1e-300),
 sig = case_when(
 is.na(padj) ~ "no_data",
