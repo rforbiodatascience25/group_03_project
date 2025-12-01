@@ -327,6 +327,22 @@ Difference in day 1 gene expression in survivors vs non-survivors
 ![](../results/05_expression_difference_day1.png){fig-align="center"}
 
 ## Results
+Expression per gene across disease status.
+
+- Clear expression differences across healthy, survivors, and nonsurvivors.
+- Innate immune genes (e.g., IRAK4, SOCS1) show higher expression in sepsis groups.
+- T-cell–related genes (CD2, CD3E, CD8A) are lower in nonsurvivors, suggesting early immune suppression.
+
+![](../results/05_expression_violinplot.png){fig-align="center"}
+## Results
+Volcano plot
+
+- A small set of genes shows significant differences between nonsurvivors and healthy individuals.
+- SOCS1 and ELK1 are upregulated, indicating early activation of inflammatory and transcriptional regulatory pathways.
+- WIPF1 and MAPK1 are downregulated, suggesting reduced signaling activity linked to cytoskeletal regulation and MAPK pathways.
+- Overall, the pattern points to early immune and signaling disturbances specifically associated with poor outcomes.
+
+![](../results/05_volcano_plot_sepsis_vs_healthy.png){fig-align="center"}
 
 ```{r expression_by_gene, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8}
 library(ggplot2)
@@ -350,69 +366,3 @@ ggplot(merged_final, aes(x = `disease status`, y = expression, fill = `disease s
 
 ## Results
 
-```{r}
-library(dplyr)
-library(ggplot2)
-library(ggrepel)
-
-groupA <- "healthy"
-groupB <- "sepsis nonsurvivor"
-pseudocount <- 1e-6
-alpha <- 0.05
-
-volcano_simple <- merged_final %>%
-filter(`disease status` %in% c(groupA, groupB)) %>%
-group_by(Gene_ID) %>%
-summarise(
-mean_A = mean(expression[`disease status` == groupA], na.rm = TRUE),
-mean_B = mean(expression[`disease status` == groupB], na.rm = TRUE),
-log2FC = log2((mean_B + pseudocount) / (mean_A + pseudocount)),
-p.value = {
-x <- expression[`disease status` == groupA]
-y <- expression[`disease status` == groupB]
-if (sum(!is.na(x)) >= 2 && sum(!is.na(y)) >= 2) {
-tryCatch(t.test(y, x)$p.value, error = function(e) NA_real_)
-} else {
-NA_real_
-}
-},
-.groups = "drop"
-) %>%
-mutate(
-padj = p.adjust(p.value, method = "fdr"),
-# protegemos contra padj = 0 al graficar -log10
-padj_plot = pmax(padj, 1e-300),
-sig = case_when(
-is.na(padj) ~ "no_data",
-padj < alpha & log2FC > 0 ~ "overexpressed",
-padj < alpha & log2FC < 0 ~ "underexpressed",
-TRUE ~ "not_significant"
-)
-)
-
-ggplot(volcano_simple, aes(x = log2FC, y = -log10(padj_plot))) +
-geom_point(aes(color = sig), alpha = 0.8, size = 2) +
-scale_color_manual(values = c(
-"overexpressed" = "#D55E00",
-"underexpressed" = "#0072B2",
-"not_significant" = "grey70",
-"no_data" = "grey95"
-)) +
-geom_text_repel(
-data = volcano_simple %>% filter(sig %in% c("overexpressed", "underexpressed")),
-aes(label = Gene_ID),
-size = 3,
-max.overlaps = 20
-) +
-geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "darkgrey") +
-geom_hline(yintercept = -log10(alpha), linetype = "dashed", color = "darkgrey") +
-theme_bw(base_size = 14) +
-labs(
-title = paste(groupB, "vs", groupA),
-x = "log2 Fold Change (B / A)",
-y = "-log10(FDR p-value)",
-color = "Significance"
-) +
-theme(plot.title = element_text(hjust = 0.5))
-
-```
