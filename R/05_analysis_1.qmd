@@ -276,7 +276,7 @@ ggplot(merged_final, aes(x = fct_infreq(`site of infection`), fill = `disease st
 
 
 ```
-Gene expression 
+Gene expression distribution per gene
 ```{r}
 ggplot(merged_final, aes(x = Gene_ID, y = expression, fill = Gene_ID)) +
   geom_violin(trim = FALSE, alpha = 0.6) +
